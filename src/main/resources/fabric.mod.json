@@ -1,41 +1,34 @@
 {
-	"schemaVersion": 1,
-	"id": "dan-schel-utils",
-	"version": "${version}",
-	"name": "Dan's Utils",
-	"description": "This is an example description! Tell everyone what your mod is about!",
-	"authors": [
-		"Me!"
-	],
-	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
-	},
-	"license": "CC0-1.0",
-	"icon": "assets/dan-schel-utils/icon.png",
-	"environment": "*",
-	"entrypoints": {
-		"main": [
-			"com.danschellekens.mc.DansUtils"
-		],
-		"client": [
-			"com.danschellekens.mc.DansUtilsClient"
-		]
-	},
-	"mixins": [
-		"dan-schel-utils.mixins.json",
-		{
-			"config": "dan-schel-utils.client.mixins.json",
-			"environment": "client"
-		}
-	],
-	"depends": {
-		"fabricloader": ">=0.15.9",
-		"minecraft": "~1.20.1",
-		"java": ">=17",
-		"fabric-api": "*"
-	},
-	"suggests": {
-		"another-mod": "*"
-	}
+  "schemaVersion": 1,
+  "id": "dan-schel-utils",
+  "version": "${version}",
+  "name": "Dan's Utils",
+  "description": "This is an example description! Tell everyone what your mod is about!",
+  "authors": ["Me!"],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "icon": "assets/dan-schel-utils/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.danschellekens.mc.DansUtils"],
+    "client": ["com.danschellekens.mc.DansUtilsClient"]
+  },
+  "mixins": [
+    "dan-schel-utils.mixins.json",
+    {
+      "config": "dan-schel-utils.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.9",
+    "minecraft": "~1.20.1",
+    "java": ">=17",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
 }
