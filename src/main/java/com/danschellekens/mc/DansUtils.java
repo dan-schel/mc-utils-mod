@@ -2,9 +2,13 @@ package com.danschellekens.mc;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.command.CommandException;
+import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.Vec3d;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,24 +29,41 @@ public class DansUtils implements ModInitializer {
 
 		LOGGER.info("Hello Fabric world!");
 
-		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(literal("foo")
-        .executes(context -> {
-      // For versions below 1.19, replace "Text.literal" with "new LiteralText".
-      // For versions below 1.20, remode "() ->" directly.
-      context.getSource().sendFeedback(() -> Text.literal("Called /foo with no arguments."), false);
-			if (context.getSource().isExecutedByPlayer()) {
-				ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
-				CommandManager commands = player.getServer().getCommandManager();
+		CommandRegistrationCallback.EVENT.register(
+			(dispatcher, registryAccess, environment) -> dispatcher.register(literal("warp").then(argument("target", EntityArgumentType.player()).executes(
+				context -> {
+					final ServerCommandSource source = context.getSource();
+					
+					if (!source.isExecutedByPlayer()) {
+						throw new CommandException(Text.literal("Not executed by a player."));
+					}
+					
+					final ServerPlayerEntity player = source.getPlayerOrThrow();	
+					final ServerPlayerEntity target = EntityArgumentType.getPlayer(context, "target");
+					
+					if (player.getId() == target.getId()) {
+						// Jokes on them, we don't teleport them at all!
+						// TODO: Use proper command output methods instead of /me.
+						executeCommand(player, "me teleported to... @s?");
+						return 1;
+					}
 
-				// TODO: This doesn't work unless the player has permission to use the teleport command. 
-				// So sorta defeats the whole purpose. :/
-				// Might need to figure out how to run commands as the "server"/console.
-				commands.executeWithPrefix(context.getSource(), "teleport ~ ~10 ~");
-			}
-			else {
-				context.getSource().sendFeedback(() -> Text.literal("Not executed by a player."), false);
-			}
-      return 1;
-    })));
+					final Vec3d targetPosition = target.getPos();
+					player.teleport(targetPosition.x, targetPosition.y, targetPosition.z);
+					// TODO: Use proper command output methods instead of /me.
+					executeCommand(player, "me teleported to " + target.getName().getString() + "!");
+					return 1;
+				}
+			))
+		));
+	}
+
+	int executeCommand(ServerPlayerEntity player, String command) {
+		String playerName = player.getName().getString();
+		CommandManager commands = player.getServer().getCommandManager();
+		return commands.executeWithPrefix(
+			player.getServer().getCommandSource(), 
+			"execute as " + playerName + " run " + command
+		);
 	}
 }
