@@ -33,6 +33,10 @@ public class DansUtils implements ModInitializer {
 			if (context.getSource().isExecutedByPlayer()) {
 				ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
 				CommandManager commands = player.getServer().getCommandManager();
+
+				// TODO: This doesn't work unless the player has permission to use the teleport command. 
+				// So sorta defeats the whole purpose. :/
+				// Might need to figure out how to run commands as the "server"/console.
 				commands.executeWithPrefix(context.getSource(), "teleport ~ ~10 ~");
 			}
 			else {
