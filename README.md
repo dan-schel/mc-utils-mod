@@ -4,7 +4,8 @@
 
 To develop the mod, you'll need to install the [Extension Pack for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack), and then run:
 
-```
+```sh
+export JAVA_HOME="/usr/lib/jvm/java-21-openjdk" # Make sure it's Java 21
 chmod +x ./gradlew
 ./gradlew vscode
 ./gradlew genSources
@@ -16,13 +17,13 @@ This will create a VSCode run/debug workflow, which will boot up the game with t
 
 Use the following command to compile the mod:
 
-```
+```sh
 ./gradlew clean build
 ```
 
 There is also a GitHub action which compiles the mod as an artifact, that you download it from there.
 
-This only works if you have Java 17 installed (or whichever version is listed in `build.gradle`, I think).
+This only works if you have Java 21 installed (or whichever version is listed in `build.gradle`, I think).
 
 ## TODO
 

@@ -2,9 +2,7 @@ package com.danschellekens.mc;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.argument.EntityArgumentType;
-import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -30,40 +28,29 @@ public class DansUtils implements ModInitializer {
 		LOGGER.info("Hello Fabric world!");
 
 		CommandRegistrationCallback.EVENT.register(
-			(dispatcher, registryAccess, environment) -> dispatcher.register(literal("warp").then(argument("target", EntityArgumentType.player()).executes(
+			(dispatcher, registryAccess, environment) -> dispatcher.register(literal("visit").then(argument("target", EntityArgumentType.player()).executes(
 				context -> {
 					final ServerCommandSource source = context.getSource();
 					
 					if (!source.isExecutedByPlayer()) {
-						throw new CommandException(Text.literal("Not executed by a player."));
+						context.getSource().sendFeedback(() -> Text.literal("Not executed by a player."), false);
+						return 1;
 					}
 					
 					final ServerPlayerEntity player = source.getPlayerOrThrow();	
 					final ServerPlayerEntity target = EntityArgumentType.getPlayer(context, "target");
 					
 					if (player.getId() == target.getId()) {
-						// Jokes on them, we don't teleport them at all!
-						// TODO: Use proper command output methods instead of /me.
-						executeCommand(player, "me teleported to... @s?");
+						context.getSource().sendFeedback(() -> Text.literal("You can't teleport to yourself."), false);
 						return 1;
 					}
 
 					final Vec3d targetPosition = target.getPos();
-					player.teleport(targetPosition.x, targetPosition.y, targetPosition.z);
-					// TODO: Use proper command output methods instead of /me.
-					executeCommand(player, "me teleported to " + target.getName().getString() + "!");
+					player.teleport(targetPosition.x, targetPosition.y, targetPosition.z, false);
+					context.getSource().sendFeedback(() -> Text.literal(player.getName().getString() + " teleported to " + target.getName().getString() + "."), true);
 					return 1;
 				}
 			))
 		));
-	}
-
-	int executeCommand(ServerPlayerEntity player, String command) {
-		String playerName = player.getName().getString();
-		CommandManager commands = player.getServer().getCommandManager();
-		return commands.executeWithPrefix(
-			player.getServer().getCommandSource(), 
-			"execute as " + playerName + " run " + command
-		);
 	}
 }
