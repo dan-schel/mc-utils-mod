@@ -1,5 +1,6 @@
-package com.danschellekens.mc;
+package com.danschellekens.mc.commands;
 
+import com.danschellekens.mc.utils.PlayerSuggestionProvider;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -12,7 +13,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 
 public class VisitCommand {
-  static LiteralArgumentBuilder<ServerCommandSource> COMMAND = CommandManager
+  public static LiteralArgumentBuilder<ServerCommandSource> COMMAND = CommandManager
     .literal("visit")
     .then(
       CommandManager

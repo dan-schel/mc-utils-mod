@@ -1,4 +1,4 @@
-package com.danschellekens.mc;
+package com.danschellekens.mc.utils;
 
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;

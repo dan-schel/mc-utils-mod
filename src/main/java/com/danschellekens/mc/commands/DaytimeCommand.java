@@ -1,4 +1,4 @@
-package com.danschellekens.mc;
+package com.danschellekens.mc.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -10,7 +10,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 
 public class DaytimeCommand {
-  static LiteralArgumentBuilder<ServerCommandSource> COMMAND = CommandManager
+  public static LiteralArgumentBuilder<ServerCommandSource> COMMAND = CommandManager
     .literal("daytime")
     .executes(DaytimeCommand::execute);
 

@@ -6,6 +6,10 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.danschellekens.mc.commands.DaytimeCommand;
+import com.danschellekens.mc.commands.SunshineCommand;
+import com.danschellekens.mc.commands.VisitCommand;
+
 public class DansUtils implements ModInitializer {
 	// This logger is used to write text to the console and the log file.
 	// It is considered best practice to use your mod id as the logger's name.
