@@ -16,6 +16,8 @@ public class DansUtils implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
   public static final Logger LOGGER = LoggerFactory.getLogger("dan-schel-utils");
 
+	public static final String MOD_ID = "dan-schel-utils";
+
 	@Override
 	public void onInitialize() {
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {

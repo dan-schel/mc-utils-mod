@@ -15,10 +15,10 @@ public class DaytimeCommand {
     .executes(DaytimeCommand::execute);
 
   public static int execute(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-		final ServerCommandSource source = context.getSource();
-		final ServerWorld world = source.getWorld();
+		ServerCommandSource source = context.getSource();
+		ServerWorld world = source.getWorld();
 
-		final long currentTime = world.getTimeOfDay() % 24000;
+		long currentTime = world.getTimeOfDay() % 24000;
 
 		if (currentTime < 10000) {
 			source.sendFeedback(() -> Text.literal("It isn't night time."), false);

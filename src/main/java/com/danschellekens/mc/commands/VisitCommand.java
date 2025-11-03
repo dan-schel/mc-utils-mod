@@ -9,8 +9,8 @@ import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.Vec3d;
 
 public class VisitCommand {
   public static LiteralArgumentBuilder<ServerCommandSource> COMMAND = CommandManager
@@ -23,23 +23,28 @@ public class VisitCommand {
     );
 
   public static int execute(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-		final ServerCommandSource source = context.getSource();
+		ServerCommandSource source = context.getSource();
 						
 		if (!source.isExecutedByPlayer()) {
 			source.sendFeedback(() -> Text.literal("Not executed by a player."), false);
 			return 0;
 		}
 		
-		final ServerPlayerEntity player = source.getPlayerOrThrow();	
-		final ServerPlayerEntity target = EntityArgumentType.getPlayer(context, "who");
+		ServerPlayerEntity player = source.getPlayerOrThrow();	
+		ServerPlayerEntity target = EntityArgumentType.getPlayer(context, "who");
 		
 		if (player.getId() == target.getId()) {
 			source.sendFeedback(() -> Text.literal("You can't teleport to yourself."), false);
 			return 0;
 		}
 
-		final Vec3d targetPosition = target.getPos();
-		player.teleport(targetPosition.x, targetPosition.y, targetPosition.z, false);
+		ServerWorld world = target.getServerWorld();
+		double x = target.getX();
+		double y = target.getY();
+		double z = target.getZ();
+		float yaw = player.getYaw();
+		float pitch = player.getPitch();		
+		player.teleport(world, x, y, z, yaw, pitch);
 
     String message = player.getName().getString() + " teleported to " + target.getName().getString() + ".";
 		source.sendFeedback(() -> Text.literal(message), true);

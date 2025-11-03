@@ -15,8 +15,8 @@ public class SunshineCommand {
     .executes(SunshineCommand::execute);
 
   public static int execute(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-		final ServerCommandSource source = context.getSource();
-		final ServerWorld world = source.getWorld();
+		ServerCommandSource source = context.getSource();
+		ServerWorld world = source.getWorld();
 
 		if (!world.isRaining() && !world.isThundering()) {
 			source.sendFeedback(() -> Text.literal("The weather is already clear."), false);
