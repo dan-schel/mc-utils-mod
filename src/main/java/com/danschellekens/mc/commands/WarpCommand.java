@@ -79,7 +79,7 @@ public class WarpCommand {
 		ServerPlayerEntity player = source.getPlayerOrThrow();
 		BlockPos position = player.getBlockPos();
 
-		String name = StringArgumentType.getString(context, "where");
+		String name = StringArgumentType.getString(context, "name");
 		// Do a proper regex check.
 		if (name.contains(" ")) {
 			source.sendFeedback(() -> Text.literal("Warp point names cannot contain spaces."), false);
