@@ -15,6 +15,8 @@ public class DansUtils implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+			dispatcher.register(DaytimeCommand.COMMAND);
+			dispatcher.register(SunshineCommand.COMMAND);
 			dispatcher.register(VisitCommand.COMMAND);
 		});
 	}

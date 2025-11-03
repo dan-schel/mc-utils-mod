@@ -25,7 +25,7 @@ public class VisitCommand {
 		final ServerCommandSource source = context.getSource();
 						
 		if (!source.isExecutedByPlayer()) {
-			context.getSource().sendFeedback(() -> Text.literal("Not executed by a player."), false);
+			source.sendFeedback(() -> Text.literal("Not executed by a player."), false);
 			return 0;
 		}
 		
@@ -33,14 +33,17 @@ public class VisitCommand {
 		final ServerPlayerEntity target = EntityArgumentType.getPlayer(context, "who");
 		
 		if (player.getId() == target.getId()) {
-			context.getSource().sendFeedback(() -> Text.literal("You can't teleport to yourself."), false);
+			source.sendFeedback(() -> Text.literal("You can't teleport to yourself."), false);
 			return 0;
 		}
 
 		final Vec3d targetPosition = target.getPos();
 		player.teleport(targetPosition.x, targetPosition.y, targetPosition.z, false);
-		context.getSource().sendFeedback(() -> Text.literal(player.getName().getString() + " teleported to " + target.getName().getString() + "."), true);
-		return 1;
+
+    String message = player.getName().getString() + " teleported to " + target.getName().getString() + ".";
+		source.sendFeedback(() -> Text.literal(message), true);
+		
+    return 1;
 	}
 
 }
