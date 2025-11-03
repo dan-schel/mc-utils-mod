@@ -19,15 +19,13 @@ repositories {
 }
 
 loom {
-    splitEnvironmentSourceSets()
+  splitEnvironmentSourceSets()
 
 	mods {
 		"dan-schel-utils" {
 			sourceSet sourceSets.main
-			sourceSet sourceSets.client
 		}
 	}
-
 }
 
 dependencies {

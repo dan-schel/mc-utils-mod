@@ -4,31 +4,20 @@
   "version": "${version}",
   "name": "Dan's Utils",
   "description": "This is an example description! Tell everyone what your mod is about!",
-  "authors": ["Me!"],
+  "authors": ["Dan Schellekens"],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://github.com/dan-schel/mc-utils-mod",
+    "sources": "https://github.com/dan-schel/mc-utils-mod"
   },
   "icon": "assets/dan-schel-utils/icon.png",
   "environment": "*",
   "entrypoints": {
-    "main": ["com.danschellekens.mc.DansUtils"],
-    "client": ["com.danschellekens.mc.DansUtilsClient"]
+    "main": ["com.danschellekens.mc.DansUtils"]
   },
-  "mixins": [
-    "dan-schel-utils.mixins.json",
-    {
-      "config": "dan-schel-utils.client.mixins.json",
-      "environment": "client"
-    }
-  ],
   "depends": {
     "fabricloader": ">=0.17.2",
     "minecraft": "~1.21.1",
     "java": ">=21",
     "fabric-api": "*"
-  },
-  "suggests": {
-    "another-mod": "*"
   }
 }
