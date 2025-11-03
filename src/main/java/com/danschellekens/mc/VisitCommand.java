@@ -1,0 +1,46 @@
+package com.danschellekens.mc;
+
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+
+import net.minecraft.command.argument.EntityArgumentType;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
+import net.minecraft.util.math.Vec3d;
+
+public class VisitCommand {
+  static LiteralArgumentBuilder<ServerCommandSource> COMMAND = CommandManager
+    .literal("visit")
+    .then(
+      CommandManager
+        .argument("who", EntityArgumentType.player())
+        .suggests(new PlayerSuggestionProvider(false))
+        .executes(VisitCommand::execute)
+    );
+
+  public static int execute(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+		final ServerCommandSource source = context.getSource();
+						
+		if (!source.isExecutedByPlayer()) {
+			context.getSource().sendFeedback(() -> Text.literal("Not executed by a player."), false);
+			return 0;
+		}
+		
+		final ServerPlayerEntity player = source.getPlayerOrThrow();	
+		final ServerPlayerEntity target = EntityArgumentType.getPlayer(context, "who");
+		
+		if (player.getId() == target.getId()) {
+			context.getSource().sendFeedback(() -> Text.literal("You can't teleport to yourself."), false);
+			return 0;
+		}
+
+		final Vec3d targetPosition = target.getPos();
+		player.teleport(targetPosition.x, targetPosition.y, targetPosition.z, false);
+		context.getSource().sendFeedback(() -> Text.literal(player.getName().getString() + " teleported to " + target.getName().getString() + "."), true);
+		return 1;
+	}
+
+}
