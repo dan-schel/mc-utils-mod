@@ -29,5 +29,4 @@ public class SunshineCommand {
 		source.sendFeedback(() -> Text.literal("Cleared the weather for 3 hours."), true);
 		return 1;
 	}
-
 }

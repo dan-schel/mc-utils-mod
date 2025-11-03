@@ -51,5 +51,4 @@ public class VisitCommand {
 		
     return 1;
 	}
-
 }

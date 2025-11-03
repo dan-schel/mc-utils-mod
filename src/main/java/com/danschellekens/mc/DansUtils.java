@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.danschellekens.mc.commands.DaytimeCommand;
 import com.danschellekens.mc.commands.SunshineCommand;
 import com.danschellekens.mc.commands.VisitCommand;
+import com.danschellekens.mc.commands.WarpCommand;
 
 public class DansUtils implements ModInitializer {
 	// This logger is used to write text to the console and the log file.
@@ -24,6 +25,7 @@ public class DansUtils implements ModInitializer {
 			dispatcher.register(DaytimeCommand.COMMAND);
 			dispatcher.register(SunshineCommand.COMMAND);
 			dispatcher.register(VisitCommand.COMMAND);
+			dispatcher.register(WarpCommand.COMMAND);
 		});
 	}
 }

@@ -26,11 +26,11 @@ public class GlobalWarpLocations extends PersistentState {
     }
   }
 
-  WarpLocation get(String name) {
+  public WarpLocation get(String name) {
     return this.locations.get(name);
   }
 
-  String[] getAllNames() {
+  public String[] getAllNames() {
     String[] names = new String[this.locations.size()];
     int i = 0;
 
@@ -42,16 +42,16 @@ public class GlobalWarpLocations extends PersistentState {
     return names;
   }
 
-  void add(WarpLocation location) {
+  public void add(WarpLocation location) {
     this.locations.put(location.name, location);
     this.markDirty();
   }
 
-  void hasWithName(String name) {
+  public void hasWithName(String name) {
     this.locations.containsKey(name);
   }
 
-  void remove(String name) {
+  public void remove(String name) {
     this.locations.remove(name);
     this.markDirty();
   }

@@ -30,5 +30,4 @@ public class DaytimeCommand {
 		source.sendFeedback(() -> Text.literal("Skipped to daytime."), true);
 		return 1;
 	}
-
 }
