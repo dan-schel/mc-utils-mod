@@ -34,7 +34,7 @@ public class VisitCommand {
 		ServerPlayerEntity target = EntityArgumentType.getPlayer(context, "who");
 		
 		if (player.getId() == target.getId()) {
-			source.sendFeedback(() -> Text.literal("You can't teleport to yourself."), false);
+			source.sendFeedback(() -> Text.literal("You can't visit yourself."), false);
 			return 0;
 		}
 
@@ -46,7 +46,7 @@ public class VisitCommand {
 		float pitch = player.getPitch();		
 		player.teleport(world, x, y, z, yaw, pitch);
 
-    String message = player.getName().getString() + " teleported to " + target.getName().getString() + ".";
+    String message = player.getName().getString() + " is visiting " + target.getName().getString() + ".";
 		source.sendFeedback(() -> Text.literal(message), true);
 		
     return 1;

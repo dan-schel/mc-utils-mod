@@ -16,11 +16,11 @@ public class WarpLocation {
     this.dimension = dimension;
   }
 
-  BlockPos getPosition() {
+  public BlockPos getPosition() {
     return position;
   }
 
-  String getDimension() {
+  public String getDimension() {
     return dimension;
   }
 

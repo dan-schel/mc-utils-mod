@@ -47,8 +47,8 @@ public class GlobalWarpLocations extends PersistentState {
     this.markDirty();
   }
 
-  public void hasWithName(String name) {
-    this.locations.containsKey(name);
+  public boolean hasWithName(String name) {
+    return this.locations.containsKey(name);
   }
 
   public void remove(String name) {
