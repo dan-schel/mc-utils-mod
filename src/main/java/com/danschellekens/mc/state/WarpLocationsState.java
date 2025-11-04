@@ -120,17 +120,19 @@ public class WarpLocationsState extends PersistentState {
     return null;
   }
 
-  public String[] getPossibleWarps(UUID playerUUID) {
+  public String[] getPossibleWarps(UUID playerUUID, boolean includeGlobal) {
     ArrayList<String> result = new ArrayList<>();
 
-    for (String key : this.global.keys()) {
-      result.add(key);
+    if (includeGlobal) {
+      for (String key : this.global.keys()) {
+        result.add(key);
+      }
     }
 
     WarpLocationCollection collection = this.playerSpecific.get(playerUUID);
     if (collection != null) {
       for (String key : collection.keys()) {
-        if (result.contains(key)) {
+        if (this.global.contains(key)) {
           continue;
         }
         result.add(key);

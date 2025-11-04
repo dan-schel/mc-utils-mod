@@ -19,7 +19,7 @@ public class WarpRemoveCommand {
     .then(
       CommandManager
         .argument("name", StringArgumentType.word())
-		    .suggests(new WarpLocationSuggestionProvider())
+		    .suggests(new WarpLocationSuggestionProvider(true))
         .executes(WarpRemoveCommand::execute)
     );
 

@@ -13,6 +13,12 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public class WarpLocationSuggestionProvider implements SuggestionProvider<ServerCommandSource>  {
+	boolean hideGlobalWarpsUnlessOp;
+
+	public WarpLocationSuggestionProvider(boolean hideGlobalWarpsUnlessOp) {
+		this.hideGlobalWarpsUnlessOp = hideGlobalWarpsUnlessOp;
+	}
+
   @Override
 	public CompletableFuture<Suggestions> getSuggestions(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder) throws CommandSyntaxException {
 		ServerCommandSource source = context.getSource();
@@ -22,8 +28,11 @@ public class WarpLocationSuggestionProvider implements SuggestionProvider<Server
 		if (currentPlayer == null) {
 			return builder.buildFuture();
 		}
+
+		boolean isPlayerOp = currentPlayer.hasPermissionLevel(4);
+		boolean includeGlobal = isPlayerOp || !this.hideGlobalWarpsUnlessOp;
     
-		for (String warpName : warpLocations.getPossibleWarps(currentPlayer.getUuid())) {
+		for (String warpName : warpLocations.getPossibleWarps(currentPlayer.getUuid(), includeGlobal)) {
 			builder.suggest(warpName);
 		}
 

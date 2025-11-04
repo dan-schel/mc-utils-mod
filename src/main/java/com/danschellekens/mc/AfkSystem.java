@@ -35,8 +35,11 @@ public class AfkSystem {
       this.lastMovementTime = Instant.now();
     }
 
-    void setDeclaredAfk(boolean isDeclaredAfk) {
+    void setDeclaredAfk(boolean isDeclaredAfk, boolean manually) {
       this.isDeclaredAfk = isDeclaredAfk;
+      if (manually) {
+        this.lastMovementTime = null;
+      }
     }
 
     boolean shouldDeclareAfk() {
@@ -48,7 +51,7 @@ public class AfkSystem {
     }
 
     boolean isInactive() {
-      return Instant.now().minusSeconds(AFK_TIMEOUT_SECONDS).isAfter(lastMovementTime);
+      return lastMovementTime == null || Instant.now().minusSeconds(AFK_TIMEOUT_SECONDS).isAfter(lastMovementTime);
     }
   }
 
@@ -84,6 +87,8 @@ public class AfkSystem {
   }
 
   public void manuallyDeclareAfk(ServerPlayerEntity player) {
+    PlayerStatus status = getOrCreateStatus(player);
+    status.setDeclaredAfk(true, true);
     onPlayerBecomesAfk(player);
   }
 
@@ -104,10 +109,12 @@ public class AfkSystem {
     status.update(currentYaw, currentPitch);
 
     if (status.shouldDeclareAfk()) {
+      status.setDeclaredAfk(true, false);
       onPlayerBecomesAfk(player);
     }
  
     if (status.shouldDeclareActive()) {
+      status.setDeclaredAfk(false, false);
       onPlayerBecomesActive(player);
     }
   }
@@ -125,10 +132,7 @@ public class AfkSystem {
   }
 
   private void onPlayerBecomesAfk(ServerPlayerEntity player) {
-    PlayerStatus status = getOrCreateStatus(player);
-    status.setDeclaredAfk(true);
-
-    // TODO: This doesn't appear in chat like I want it to.
+    // TODO: This doesn't appear to work in singleplayer, but might in multiplayer.
     player.getServer().sendMessage(Text.literal(player.getName().getString() + " is AFK."));
 
     // TODO: Need to assign them to a scoreboard team so it becomes blue.
@@ -136,10 +140,7 @@ public class AfkSystem {
   }
 
   private void onPlayerBecomesActive(ServerPlayerEntity player) {
-    PlayerStatus status = getOrCreateStatus(player);
-    status.setDeclaredAfk(false);
-
-    // TODO: This doesn't appear in chat like I want it to.
+    // TODO: This doesn't appear to work in singleplayer, but might in multiplayer.
     player.getServer().sendMessage(Text.literal(player.getName().getString() + " is no longer AFK."));
 
     // TODO: Need to remove them from blue team.

@@ -17,7 +17,7 @@ import net.minecraft.server.world.ServerWorld;
 public class WarpWhereCommand {
   public static RequiredArgumentBuilder<ServerCommandSource,String> COMMAND = CommandManager
 		.argument("where", StringArgumentType.word())
-		.suggests(new WarpLocationSuggestionProvider())
+		.suggests(new WarpLocationSuggestionProvider(false))
 		.executes(WarpWhereCommand::execute);
 
   private static int execute(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
