@@ -1,5 +1,6 @@
 package com.danschellekens.mc.commands;
 
+import com.danschellekens.mc.utils.CommandUtils;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -7,7 +8,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
 
 public class DaytimeCommand {
   public static LiteralArgumentBuilder<ServerCommandSource> COMMAND = CommandManager
@@ -21,13 +21,11 @@ public class DaytimeCommand {
 		long currentTime = world.getTimeOfDay() % 24000;
 
 		if (currentTime < 10000) {
-			source.sendFeedback(() -> Text.literal("It isn't night time."), false);
-			return 0;
+			return CommandUtils.failure(source, "It isn't night time.");
 		}
 
 		world.setTimeOfDay(0);
 
-		source.sendFeedback(() -> Text.literal("Skipped to daytime."), true);
-		return 1;
+		return CommandUtils.success(source, "Skipped to daytime.");
 	}
 }

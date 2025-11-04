@@ -1,5 +1,6 @@
 package com.danschellekens.mc.commands;
 
+import com.danschellekens.mc.utils.CommandUtils;
 import com.danschellekens.mc.utils.PlayerSuggestionProvider;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -10,7 +11,6 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
 
 public class VisitCommand {
   public static LiteralArgumentBuilder<ServerCommandSource> COMMAND = CommandManager
@@ -27,15 +27,13 @@ public class VisitCommand {
 		ServerPlayerEntity player = source.getPlayer();
 		
 		if (player == null) {
-			source.sendFeedback(() -> Text.literal("Not executed by a player."), false);
-			return 0;
+			return CommandUtils.failure(source, "Not executed by a player.");
 		}
-		
+
 		ServerPlayerEntity target = EntityArgumentType.getPlayer(context, "who");
 		
 		if (player.getId() == target.getId()) {
-			source.sendFeedback(() -> Text.literal("You can't visit yourself."), false);
-			return 0;
+			return CommandUtils.failure(source, "You can't visit yourself.");
 		}
 
 		ServerWorld world = target.getServerWorld();
@@ -46,9 +44,6 @@ public class VisitCommand {
 		float pitch = player.getPitch();		
 		player.teleport(world, x, y, z, yaw, pitch);
 
-    String message = player.getName().getString() + " is visiting " + target.getName().getString() + ".";
-		source.sendFeedback(() -> Text.literal(message), true);
-		
-    return 1;
+		return CommandUtils.success(source, "Visiting " + target.getName().getString() + ".");
 	}
 }

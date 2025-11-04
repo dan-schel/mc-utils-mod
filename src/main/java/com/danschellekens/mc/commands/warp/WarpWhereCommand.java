@@ -2,6 +2,7 @@ package com.danschellekens.mc.commands.warp;
 
 import com.danschellekens.mc.state.WarpLocationsState;
 import com.danschellekens.mc.state.WarpLocation;
+import com.danschellekens.mc.utils.CommandUtils;
 import com.danschellekens.mc.utils.WarpLocationSuggestionProvider;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
@@ -12,7 +13,6 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
 
 public class WarpWhereCommand {
   public static RequiredArgumentBuilder<ServerCommandSource,String> COMMAND = CommandManager
@@ -25,9 +25,7 @@ public class WarpWhereCommand {
 		ServerPlayerEntity player = source.getPlayer();
 		
 		if (player == null) {
-      // TODO: Use CommandUtils instead of sendFeedback.
-			source.sendFeedback(() -> Text.literal("Not executed by a player."), false);
-			return 0;
+			return CommandUtils.failure(source, "Not executed by a player.");
 		}
 		
 		String name = StringArgumentType.getString(context, "where");
@@ -35,8 +33,7 @@ public class WarpWhereCommand {
 		WarpLocation location = locations.get(player.getUuid(), name);
 
 		if (location == null) {
-			source.sendFeedback(() -> Text.literal("Warp point \"" + name + "\" not found."), false);
-			return 0;
+			return CommandUtils.failure(source, "Warp point \"" + name + "\" not found.");
 		}
 
 		ServerWorld world = source.getServer().getWorld(location.getDimension().getWorldRegistryKey());
@@ -47,9 +44,6 @@ public class WarpWhereCommand {
 		float pitch = player.getPitch();		
 		player.teleport(world, x, y, z, yaw, pitch);
 
-    String message = player.getName().getString() + " warped to \"" + name + "\".";
-		source.sendFeedback(() -> Text.literal(message), true);
-		
-    return 1;
+		return CommandUtils.success(source, "Warped to \"" + name + "\".");
 	}
 }
