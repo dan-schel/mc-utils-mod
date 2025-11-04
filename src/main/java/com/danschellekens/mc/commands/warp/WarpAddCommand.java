@@ -62,8 +62,10 @@ public class WarpAddCommand {
     AddResult result = locations.add(player.getUuid(), name, location, global, isPlayerOp);
 
     switch (result) {
-      case SUCCESS:
+      case ADDED_NEW:
         return CommandUtils.success(source, "Added " + (global ? "global " : "personal ") + "warp point \"" + name + "\" (" + location.getDisplayString() + ").");
+      case UPDATED_EXISTING:
+        return CommandUtils.success(source, "Moved " + (global ? "global " : "personal ") + "warp point \"" + name + "\" to " + location.getDisplayString() + ".");
       case CLASHES_WITH_GLOBAL:
         return CommandUtils.failure(source, "There is already global warp point with this name.");
       case REQUIRES_OP:

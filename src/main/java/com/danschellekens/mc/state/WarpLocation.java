@@ -22,7 +22,7 @@ public class WarpLocation {
   }
 
   public String getDisplayString() {
-    return dimension.getDisplayString() + " at " + position.getX() + ", " + position.getY() + ", " + position.getZ();
+    return position.getX() + ", " + position.getY() + ", " + position.getZ() + " in " + dimension.getDisplayString();
   }
 
   public NbtCompound toNbt() {

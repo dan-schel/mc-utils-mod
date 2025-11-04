@@ -17,7 +17,8 @@ public class WarpLocationsState extends PersistentState {
   public static final int MAX_WARP_LOCATIONS_PER_PLAYER = 5;
 
   public enum AddResult {
-    SUCCESS,
+    ADDED_NEW,
+    UPDATED_EXISTING,
     CLASHES_WITH_GLOBAL,
     REQUIRES_OP,
     ALREADY_REACHED_MAXIMUM
@@ -46,13 +47,15 @@ public class WarpLocationsState extends PersistentState {
   public AddResult add(UUID playerUUID, String name, WarpLocation location, boolean global, boolean isPlayerOp) {
     if (global) {
       if (isPlayerOp) {
+        boolean alreadyExisted = this.global.contains(name);
+
         this.global.add(name, location);
         for (WarpLocationCollection collection : this.playerSpecific.values()) {
           collection.remove(name);
         }
         this.markDirty();
         
-        return AddResult.SUCCESS;
+        return alreadyExisted ? AddResult.UPDATED_EXISTING : AddResult.ADDED_NEW;
       }
       else {
         return AddResult.REQUIRES_OP;
@@ -69,14 +72,16 @@ public class WarpLocationsState extends PersistentState {
         this.playerSpecific.put(playerUUID, collection);
       }
       
-      if (collection.size() >= MAX_WARP_LOCATIONS_PER_PLAYER && !collection.contains(name)) {
+      boolean alreadyExisted = collection.contains(name);
+
+      if (collection.size() >= MAX_WARP_LOCATIONS_PER_PLAYER && !alreadyExisted) {
         return AddResult.ALREADY_REACHED_MAXIMUM;
       }
       
       collection.add(name, location);
       this.markDirty();
 
-      return AddResult.SUCCESS;
+      return alreadyExisted ? AddResult.UPDATED_EXISTING : AddResult.ADDED_NEW;
     }
   }
 
