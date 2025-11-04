@@ -46,7 +46,7 @@ public class WarpAddCommand {
 		}
 
 		String name = StringArgumentType.getString(context, "name");
-		if (!name.matches("^[a-z_]{1,50}$")) {
+		if (!name.matches("^[a-z][a-z0-9_]{0,49}$")) {
       return CommandUtils.failure(source, "Invalid warp point name.");
 		}
 
