@@ -29,7 +29,4 @@ This only works if you have Java 21 installed (or whichever version is listed in
 
 ## TODO
 
-- Move AFK stuff into the mod.
-  - `/afk`
-  - Probably no need for a "disable AFK" command.
 - Move antigrief stuff into the mod.
