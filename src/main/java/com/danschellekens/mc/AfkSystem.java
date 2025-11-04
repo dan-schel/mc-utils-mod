@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
+import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -12,19 +13,21 @@ import net.minecraft.util.Formatting;
 
 public class AfkSystem {
   private static AfkSystem INSTANCE;
-  private static final int AFK_TIMEOUT_SECONDS = 10; // 5 minutes
+  private static final int AFK_TIMEOUT_SECONDS = 300; // 5 minutes
   
   class PlayerStatus {
     boolean isDeclaredAfk;
     double yaw;
     double pitch;
     Instant lastMovementTime;
+    String scoreHolderName;
 
-    public PlayerStatus(boolean isDeclaredAfk, double yaw, double pitch, Instant lastMovementTime) {
+    public PlayerStatus(boolean isDeclaredAfk, double yaw, double pitch, Instant lastMovementTime, String scoreHolderName) {
       this.isDeclaredAfk = isDeclaredAfk;
       this.yaw = yaw;
       this.pitch = pitch;
       this.lastMovementTime = lastMovementTime;
+      this.scoreHolderName = scoreHolderName;
     }
 
     void update(double yaw, double pitch) {
@@ -54,6 +57,10 @@ public class AfkSystem {
 
     boolean isInactive() {
       return lastMovementTime == null || Instant.now().minusSeconds(AFK_TIMEOUT_SECONDS).isAfter(lastMovementTime);
+    }
+
+    String getScoreHolderName() {
+      return scoreHolderName;
     }
   }
 
@@ -92,6 +99,7 @@ public class AfkSystem {
       }
     }
     for (UUID playerId : playersNoLongerOnline) {
+      removeFromAfkTeam(server, players.get(playerId).getScoreHolderName());
       players.remove(playerId);
     }
   }
@@ -105,7 +113,7 @@ public class AfkSystem {
   private PlayerStatus getOrCreateStatus(ServerPlayerEntity player) {
     PlayerStatus status = players.get(player.getUuid());
     if (status == null) {
-      status = new PlayerStatus(false, player.getYaw(), player.getPitch(), Instant.now());
+      status = new PlayerStatus(false, player.getYaw(), player.getPitch(), Instant.now(), player.getNameForScoreboard());
       players.put(player.getUuid(), status);
     }
     return status;
@@ -131,39 +139,43 @@ public class AfkSystem {
 
   private void onNewPlayer(ServerPlayerEntity player) {
     getOrCreateStatus(player);
+    removeFromAfkTeam(player.getServer(), player.getNameForScoreboard());
 
     int afkPlayers = getAfkPlayerCount();
     if (afkPlayers >= 1) {
-      String quantityText = afkPlayers + (afkPlayers == 1 ? " player" : " players");
-      player.sendMessageToClient(createBlueCenterText("Welcome! " + quantityText + " are currently ", "AFK", " (press TAB)."), false);
+      String quantityText = afkPlayers + (afkPlayers == 1 ? " player is" : " players are");
+      player.sendMessageToClient(createBlueCenterText("Welcome! " + quantityText + " currently ", "AFK", " (press TAB)."), false);
     }
   }
 
   private void onPlayerBecomesAfk(ServerPlayerEntity afkPlayer) {
-    for (ServerPlayerEntity player : afkPlayer.getServer().getPlayerManager().getPlayerList()) {
+    MinecraftServer server = afkPlayer.getServer();
+
+    for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
       if (player.getUuid().equals(afkPlayer.getUuid())) {
         player.sendMessageToClient(createBlueCenterText("You're marked as ", "AFK", "."), false);
       }
       else {
-        player.sendMessageToClient(createBlueCenterText(player.getName().getString() + " is ", "AFK", "."), false);
+        player.sendMessageToClient(createBlueCenterText(afkPlayer.getName().getString() + " is ", "AFK", "."), false);
       }
     }
 
-    // TODO: Need to assign them to a scoreboard team so it becomes blue.
-    // player.getServer().getScoreboard().getTeam("dfgdfg").getPlayerList()
+    addToAfkTeam(server, afkPlayer.getNameForScoreboard());
   }
 
   private void onPlayerBecomesActive(ServerPlayerEntity activePlayer) {
-    for (ServerPlayerEntity player : activePlayer.getServer().getPlayerManager().getPlayerList()) {
+    MinecraftServer server = activePlayer.getServer();
+
+    for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
       if (player.getUuid().equals(activePlayer.getUuid())) {
         player.sendMessageToClient(createBlueCenterText("You're no longer marked as ", "AFK", "."), false);
       }
       else {
-        player.sendMessageToClient(createBlueCenterText(player.getName().getString() + " is no longer ", "AFK", "."), false);
+        player.sendMessageToClient(createBlueCenterText(activePlayer.getName().getString() + " is no longer ", "AFK", "."), false);
       }
     }
 
-    // TODO: Need to remove them from blue team.
+    removeFromAfkTeam(server, activePlayer.getNameForScoreboard());
   }
 
   private int getAfkPlayerCount() {
@@ -174,6 +186,31 @@ public class AfkSystem {
       }
     }
     return count;
+  }
+
+  public static void addToAfkTeam(MinecraftServer server, String scoreHolderName) {
+    Team afkTeam = createOrGetScoreboardTeam(server);
+    if (!afkTeam.isEqual(server.getScoreboard().getScoreHolderTeam(scoreHolderName))) {
+      server.getScoreboard().addScoreHolderToTeam(scoreHolderName, afkTeam);
+    }
+  }
+
+  public static void removeFromAfkTeam(MinecraftServer server, String scoreHolderName) {
+    Team afkTeam = createOrGetScoreboardTeam(server);
+    if (afkTeam.isEqual(server.getScoreboard().getScoreHolderTeam(scoreHolderName))) {
+      server.getScoreboard().removeScoreHolderFromTeam(scoreHolderName, afkTeam);
+    }
+  }
+
+  private static Team createOrGetScoreboardTeam(MinecraftServer server) {
+    String teamName = DansUtils.MOD_ID_SNAKE_CASE + "_afk";
+
+    if (server.getScoreboard().getTeam(teamName) == null) {
+      server.getScoreboard().addTeam(teamName);
+      server.getScoreboard().getTeam(teamName).setColor(Formatting.BLUE);
+    }
+
+    return server.getScoreboard().getTeam(teamName);
   }
 
   private static Text createBlueCenterText(String prefix, String blueText, String suffix) {

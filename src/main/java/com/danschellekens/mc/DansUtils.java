@@ -20,6 +20,7 @@ public class DansUtils implements ModInitializer {
   public static final Logger LOGGER = LoggerFactory.getLogger("dan-schel-utils");
 
 	public static final String MOD_ID = "dan-schel-utils";
+	public static final String MOD_ID_SNAKE_CASE = "dan_schel_utils";
 
 	@Override
 	public void onInitialize() {
