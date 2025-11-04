@@ -24,13 +24,13 @@ public class VisitCommand {
 
   public static int execute(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
 		ServerCommandSource source = context.getSource();
-						
-		if (!source.isExecutedByPlayer()) {
+		ServerPlayerEntity player = source.getPlayer();
+		
+		if (player == null) {
 			source.sendFeedback(() -> Text.literal("Not executed by a player."), false);
 			return 0;
 		}
 		
-		ServerPlayerEntity player = source.getPlayerOrThrow();	
 		ServerPlayerEntity target = EntityArgumentType.getPlayer(context, "who");
 		
 		if (player.getId() == target.getId()) {
