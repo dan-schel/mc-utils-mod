@@ -1,12 +1,14 @@
 package com.danschellekens.mc;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 public class AfkSystem {
   private static AfkSystem INSTANCE;
@@ -83,7 +85,15 @@ public class AfkSystem {
       }
     }
 
-    // TODO: Remove players from the map when they leave.
+    ArrayList<UUID> playersNoLongerOnline = new ArrayList<>();
+    for (UUID playerId : players.keySet()) {
+      if (server.getPlayerManager().getPlayer(playerId) == null) {
+        playersNoLongerOnline.add(playerId);
+      }
+    }
+    for (UUID playerId : playersNoLongerOnline) {
+      players.remove(playerId);
+    }
   }
 
   public void manuallyDeclareAfk(ServerPlayerEntity player) {
@@ -124,24 +134,34 @@ public class AfkSystem {
 
     int afkPlayers = getAfkPlayerCount();
     if (afkPlayers >= 1) {
-      String message = "Welcome " + player.getName().getString() + ". " + afkPlayers + (afkPlayers == 1 ? " player" : " players") + " are currently AFK (press TAB).";
-
-      // TODO: Haven't tested, but this probably doesn't work.
-      player.sendMessage(Text.literal(message));
+      String quantityText = afkPlayers + (afkPlayers == 1 ? " player" : " players");
+      player.sendMessageToClient(createBlueCenterText("Welcome! " + quantityText + " are currently ", "AFK", " (press TAB)."), false);
     }
   }
 
-  private void onPlayerBecomesAfk(ServerPlayerEntity player) {
-    // TODO: This doesn't appear to work in singleplayer, but might in multiplayer.
-    player.getServer().sendMessage(Text.literal(player.getName().getString() + " is AFK."));
+  private void onPlayerBecomesAfk(ServerPlayerEntity afkPlayer) {
+    for (ServerPlayerEntity player : afkPlayer.getServer().getPlayerManager().getPlayerList()) {
+      if (player.getUuid().equals(afkPlayer.getUuid())) {
+        player.sendMessageToClient(createBlueCenterText("You're marked as ", "AFK", "."), false);
+      }
+      else {
+        player.sendMessageToClient(createBlueCenterText(player.getName().getString() + " is ", "AFK", "."), false);
+      }
+    }
 
     // TODO: Need to assign them to a scoreboard team so it becomes blue.
     // player.getServer().getScoreboard().getTeam("dfgdfg").getPlayerList()
   }
 
-  private void onPlayerBecomesActive(ServerPlayerEntity player) {
-    // TODO: This doesn't appear to work in singleplayer, but might in multiplayer.
-    player.getServer().sendMessage(Text.literal(player.getName().getString() + " is no longer AFK."));
+  private void onPlayerBecomesActive(ServerPlayerEntity activePlayer) {
+    for (ServerPlayerEntity player : activePlayer.getServer().getPlayerManager().getPlayerList()) {
+      if (player.getUuid().equals(activePlayer.getUuid())) {
+        player.sendMessageToClient(createBlueCenterText("You're no longer marked as ", "AFK", "."), false);
+      }
+      else {
+        player.sendMessageToClient(createBlueCenterText(player.getName().getString() + " is no longer ", "AFK", "."), false);
+      }
+    }
 
     // TODO: Need to remove them from blue team.
   }
@@ -154,5 +174,11 @@ public class AfkSystem {
       }
     }
     return count;
+  }
+
+  private static Text createBlueCenterText(String prefix, String blueText, String suffix) {
+    return Text.literal(prefix)
+      .append(Text.literal(blueText).formatted(Formatting.BLUE))
+      .append(Text.literal(suffix));
   }
 }
