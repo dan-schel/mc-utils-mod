@@ -1,6 +1,7 @@
 package com.danschellekens.mc.commands;
 
 import com.danschellekens.mc.commands.warp.WarpAddCommand;
+import com.danschellekens.mc.commands.warp.WarpRemoveCommand;
 import com.danschellekens.mc.commands.warp.WarpWhereCommand;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.server.command.CommandManager;
@@ -10,5 +11,6 @@ public class WarpCommand {
   public static LiteralArgumentBuilder<ServerCommandSource> COMMAND = CommandManager
     .literal("warp")
     .then(WarpWhereCommand.COMMAND)
-		.then(WarpAddCommand.COMMAND);
+		.then(WarpAddCommand.COMMAND)
+		.then(WarpRemoveCommand.COMMAND);
 }

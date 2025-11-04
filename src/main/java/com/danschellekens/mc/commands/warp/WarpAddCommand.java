@@ -63,7 +63,7 @@ public class WarpAddCommand {
 
     switch (result) {
       case SUCCESS:
-        return CommandUtils.success(source, "Saved " + (global ? "global " : "") + "warp point \"" + name + "\" (" + location.getDisplayString() + ").");
+        return CommandUtils.success(source, "Added " + (global ? "global " : "personal ") + "warp point \"" + name + "\" (" + location.getDisplayString() + ").");
       case CLASHES_WITH_GLOBAL:
         return CommandUtils.failure(source, "There is already global warp point with this name.");
       case REQUIRES_OP:
