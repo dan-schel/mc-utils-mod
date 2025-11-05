@@ -25,6 +25,6 @@ public class AfkCommand {
 
 		AfkSystem.getInstance().manuallyDeclareAfk(player);
 
-		return CommandUtils.success(source, "Set status to AFK.");
+		return 1;
 	}
 }

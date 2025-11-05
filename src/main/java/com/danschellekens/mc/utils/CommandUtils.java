@@ -29,8 +29,7 @@ public class CommandUtils {
         continue;
       }
 
-      // TODO: Remove - NON OP VERSION.
-      onlinePlayer.sendMessageToClient(Text.literal("[" + source.getName() + ": " + message + " - NON OP VERSION]").formatted(Formatting.GRAY, Formatting.ITALIC), false);
+      onlinePlayer.sendMessageToClient(Text.literal("[" + source.getName() + ": " + message + "]").formatted(Formatting.GRAY, Formatting.ITALIC), false);
     }
 
     return 1;
