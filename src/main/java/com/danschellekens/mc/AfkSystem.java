@@ -144,7 +144,7 @@ public class AfkSystem {
     int afkPlayers = getAfkPlayerCount();
     if (afkPlayers >= 1) {
       String quantityText = afkPlayers + (afkPlayers == 1 ? " player is" : " players are");
-      player.sendMessageToClient(createBlueCenterText("Welcome! " + quantityText + " currently ", "AFK", " (press TAB)."), false);
+      sendAfkMessage(player, "Welcome! " + quantityText + " currently ", "AFK", " (press TAB).");
     }
   }
 
@@ -153,10 +153,10 @@ public class AfkSystem {
 
     for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
       if (player.getUuid().equals(afkPlayer.getUuid())) {
-        player.sendMessageToClient(createBlueCenterText("You're marked as ", "AFK", "."), false);
+        sendAfkMessage(player, "You're marked as ", "AFK", ".");
       }
       else {
-        player.sendMessageToClient(createBlueCenterText(afkPlayer.getName().getString() + " is ", "AFK", "."), false);
+        sendAfkMessage(player, afkPlayer.getName().getString() + " is ", "AFK", ".");
       }
     }
 
@@ -168,10 +168,10 @@ public class AfkSystem {
 
     for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
       if (player.getUuid().equals(activePlayer.getUuid())) {
-        player.sendMessageToClient(createBlueCenterText("You're no longer marked as ", "AFK", "."), false);
+        sendAfkMessage(player, "You're no longer marked as ", "AFK", ".");
       }
       else {
-        player.sendMessageToClient(createBlueCenterText(activePlayer.getName().getString() + " is no longer ", "AFK", "."), false);
+        sendAfkMessage(player, activePlayer.getName().getString() + " is no longer ", "AFK", ".");
       }
     }
 
@@ -213,9 +213,12 @@ public class AfkSystem {
     return server.getScoreboard().getTeam(teamName);
   }
 
-  private static Text createBlueCenterText(String prefix, String blueText, String suffix) {
-    return Text.literal(prefix)
+  private static void sendAfkMessage(ServerPlayerEntity player, String prefix, String blueText, String suffix) {
+    Text text = Text.literal(prefix)
       .append(Text.literal(blueText).formatted(Formatting.BLUE))
       .append(Text.literal(suffix));
+
+    player.sendMessageToClient(text, false);
+    player.getServer().sendMessage(text);
   }
 }
