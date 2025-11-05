@@ -22,9 +22,9 @@ public class SunshineCommand {
 			return CommandUtils.failure(source, "The weather is already clear.");
 		}
 
-		// Clear the weather for 3 hours.
-		world.setWeather(3 * 60 * 60, 0, false, false);
+		// Clear the weather for 3 hours (the docs say it's measured in seconds, but in reality it's ticks).
+		world.setWeather(3 * 60 * 60 * 20, 0, false, false);
 
-		return CommandUtils.success(source, "Cleared the weather for 3 hours.");
+		return CommandUtils.successAndTellEveryone(source, "Cleared the weather for ~3 hours.");
 	}
 }

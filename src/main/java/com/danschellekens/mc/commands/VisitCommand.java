@@ -11,6 +11,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 
 public class VisitCommand {
   public static LiteralArgumentBuilder<ServerCommandSource> COMMAND = CommandManager
@@ -43,6 +44,8 @@ public class VisitCommand {
 		float yaw = player.getYaw();
 		float pitch = player.getPitch();		
 		player.teleport(world, x, y, z, yaw, pitch);
+
+		target.sendMessageToClient(Text.literal(player.getName() + " is visiting you."), false);
 
 		return CommandUtils.success(source, "Visiting " + target.getName().getString() + ".");
 	}
