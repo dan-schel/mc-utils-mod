@@ -144,21 +144,21 @@ public class AfkSystem {
     int afkPlayers = getAfkPlayerCount();
     if (afkPlayers >= 1) {
       String quantityText = afkPlayers + (afkPlayers == 1 ? " player is" : " players are");
-      sendAfkMessage(player, "Welcome! " + quantityText + " currently ", "AFK", " (press TAB).");
+      player.sendMessageToClient(createBlueCenterText("Welcome! " + quantityText + " currently ", "AFK", " (press TAB)."), false);
     }
   }
 
   private void onPlayerBecomesAfk(ServerPlayerEntity afkPlayer) {
     MinecraftServer server = afkPlayer.getServer();
 
+    Text firstPerson = createBlueCenterText("You're marked as ", "AFK", ".");
+    Text thirdPerson = createBlueCenterText(afkPlayer.getName().getString() + " is ", "AFK", ".");
+
     for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-      if (player.getUuid().equals(afkPlayer.getUuid())) {
-        sendAfkMessage(player, "You're marked as ", "AFK", ".");
-      }
-      else {
-        sendAfkMessage(player, afkPlayer.getName().getString() + " is ", "AFK", ".");
-      }
+      player.sendMessageToClient(player.getUuid().equals(afkPlayer.getUuid()) ? firstPerson : thirdPerson, false);
     }
+
+    server.sendMessage(thirdPerson);
 
     addToAfkTeam(server, afkPlayer.getNameForScoreboard());
   }
@@ -166,14 +166,14 @@ public class AfkSystem {
   private void onPlayerBecomesActive(ServerPlayerEntity activePlayer) {
     MinecraftServer server = activePlayer.getServer();
 
+    Text firstPerson = createBlueCenterText("You're no longer marked as ", "AFK", ".");
+    Text thirdPerson = createBlueCenterText(activePlayer.getName().getString() + " is no longer ", "AFK", ".");
+
     for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-      if (player.getUuid().equals(activePlayer.getUuid())) {
-        sendAfkMessage(player, "You're no longer marked as ", "AFK", ".");
-      }
-      else {
-        sendAfkMessage(player, activePlayer.getName().getString() + " is no longer ", "AFK", ".");
-      }
+      player.sendMessageToClient(player.getUuid().equals(activePlayer.getUuid()) ? firstPerson : thirdPerson, false);
     }
+
+    server.sendMessage(thirdPerson);
 
     removeFromAfkTeam(server, activePlayer.getNameForScoreboard());
   }
@@ -213,12 +213,9 @@ public class AfkSystem {
     return server.getScoreboard().getTeam(teamName);
   }
 
-  private static void sendAfkMessage(ServerPlayerEntity player, String prefix, String blueText, String suffix) {
-    Text text = Text.literal(prefix)
+  private static Text createBlueCenterText(String prefix, String blueText, String suffix) {
+    return Text.literal(prefix)
       .append(Text.literal(blueText).formatted(Formatting.BLUE))
       .append(Text.literal(suffix));
-
-    player.sendMessageToClient(text, false);
-    player.getServer().sendMessage(text);
   }
 }
