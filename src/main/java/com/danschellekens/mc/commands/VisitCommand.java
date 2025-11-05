@@ -45,7 +45,7 @@ public class VisitCommand {
 		float pitch = player.getPitch();		
 		player.teleport(world, x, y, z, yaw, pitch);
 
-		target.sendMessageToClient(Text.literal(player.getName() + " is visiting you."), false);
+		target.sendMessageToClient(Text.literal(player.getName().getString() + " is visiting you."), false);
 
 		return CommandUtils.success(source, "Visiting " + target.getName().getString() + ".");
 	}
