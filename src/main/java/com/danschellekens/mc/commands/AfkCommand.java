@@ -25,6 +25,7 @@ public class AfkCommand {
 
 		AfkSystem.getInstance().manuallyDeclareAfk(player);
 
+		// Intentionally don't send feedback - The AfkSystem will broadcast to everyone, including this player, that they're AFK.
 		return 1;
 	}
 }
