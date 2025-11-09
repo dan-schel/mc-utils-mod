@@ -10,6 +10,7 @@ import net.minecraft.entity.mob.CreeperEntity;
 
 @Mixin(CreeperEntity.class)
 public class DefuseCreeperMixin {
+  // Allows us to access explosionRadius from CreeperEntity within our mixin.
   @Shadow
   private int explosionRadius;
 
