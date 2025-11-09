@@ -14,6 +14,7 @@
   "entrypoints": {
     "main": ["com.danschellekens.mc.DansUtils"]
   },
+  "mixins": ["antigrief.mixins.json"],
   "depends": {
     "fabricloader": ">=0.17.2",
     "minecraft": "~1.21.1",

@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "com.danschellekens.mc.antigrief",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": ["DefuseCreeperMixin"],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}
