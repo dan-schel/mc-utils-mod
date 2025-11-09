@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.danschellekens.mc.afk.AfkSystem;
 import com.danschellekens.mc.commands.AfkCommand;
 import com.danschellekens.mc.commands.DaytimeCommand;
 import com.danschellekens.mc.commands.SunshineCommand;

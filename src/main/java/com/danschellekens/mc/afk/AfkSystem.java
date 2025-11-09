@@ -1,9 +1,11 @@
-package com.danschellekens.mc;
+package com.danschellekens.mc.afk;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
+
+import com.danschellekens.mc.DansUtils;
 
 import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
@@ -13,56 +15,7 @@ import net.minecraft.util.Formatting;
 
 public class AfkSystem {
   private static AfkSystem INSTANCE;
-  private static final int AFK_TIMEOUT_SECONDS = 300; // 5 minutes
-  
-  class PlayerStatus {
-    boolean isDeclaredAfk;
-    double yaw;
-    double pitch;
-    Instant lastMovementTime;
-    String scoreHolderName;
-
-    public PlayerStatus(boolean isDeclaredAfk, double yaw, double pitch, Instant lastMovementTime, String scoreHolderName) {
-      this.isDeclaredAfk = isDeclaredAfk;
-      this.yaw = yaw;
-      this.pitch = pitch;
-      this.lastMovementTime = lastMovementTime;
-      this.scoreHolderName = scoreHolderName;
-    }
-
-    void update(double yaw, double pitch) {
-      if (this.yaw == yaw && this.pitch == pitch) {
-        return;
-      }
-
-      this.yaw = yaw;
-      this.pitch = pitch;
-      this.lastMovementTime = Instant.now();
-    }
-
-    void setDeclaredAfk(boolean isDeclaredAfk, boolean manually) {
-      this.isDeclaredAfk = isDeclaredAfk;
-      if (manually) {
-        this.lastMovementTime = null;
-      }
-    }
-
-    boolean shouldDeclareAfk() {
-      return !isDeclaredAfk && isInactive();
-    }
-
-    boolean shouldDeclareActive() {
-      return isDeclaredAfk && !isInactive();
-    }
-
-    boolean isInactive() {
-      return lastMovementTime == null || Instant.now().minusSeconds(AFK_TIMEOUT_SECONDS).isAfter(lastMovementTime);
-    }
-
-    String getScoreHolderName() {
-      return scoreHolderName;
-    }
-  }
+  public static final int AFK_TIMEOUT_SECONDS = 300; // 5 minutes
 
   private HashMap<UUID, PlayerStatus> players;
 
@@ -188,14 +141,14 @@ public class AfkSystem {
     return count;
   }
 
-  public static void addToAfkTeam(MinecraftServer server, String scoreHolderName) {
+  private static void addToAfkTeam(MinecraftServer server, String scoreHolderName) {
     Team afkTeam = createOrGetScoreboardTeam(server);
     if (!afkTeam.isEqual(server.getScoreboard().getScoreHolderTeam(scoreHolderName))) {
       server.getScoreboard().addScoreHolderToTeam(scoreHolderName, afkTeam);
     }
   }
 
-  public static void removeFromAfkTeam(MinecraftServer server, String scoreHolderName) {
+  private static void removeFromAfkTeam(MinecraftServer server, String scoreHolderName) {
     Team afkTeam = createOrGetScoreboardTeam(server);
     if (afkTeam.isEqual(server.getScoreboard().getScoreHolderTeam(scoreHolderName))) {
       server.getScoreboard().removeScoreHolderFromTeam(scoreHolderName, afkTeam);

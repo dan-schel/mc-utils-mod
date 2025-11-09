@@ -1,6 +1,6 @@
 package com.danschellekens.mc.commands;
 
-import com.danschellekens.mc.AfkSystem;
+import com.danschellekens.mc.afk.AfkSystem;
 import com.danschellekens.mc.utils.CommandUtils;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
