@@ -26,7 +26,3 @@ It saves to `/build/libs`.
 There is also a GitHub action which compiles the mod as an artifact, that you download it from there.
 
 This only works if you have Java 21 installed (or whichever version is listed in `build.gradle`, I think).
-
-## TODO
-
-- Move antigrief stuff into the mod.
