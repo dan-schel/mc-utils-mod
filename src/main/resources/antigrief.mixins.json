@@ -2,7 +2,12 @@
   "required": true,
   "package": "com.danschellekens.mc.antigrief",
   "compatibilityLevel": "JAVA_21",
-  "mixins": ["DefuseCreeperMixin", "DefuseGhastMixin"],
+  "mixins": [
+    "DefuseCreeperMixin",
+    "DefuseGhastMixin",
+    "PreventEndermanPickUpBlockMixin",
+    "PreventEndermanPlaceBlockMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   },
