@@ -17,8 +17,8 @@
   "mixins": ["antigrief.mixins.json"],
   "accessWidener": "antigrief.accesswidener",
   "depends": {
-    "fabricloader": ">=0.17.2",
-    "minecraft": "~1.21.1",
+    "fabricloader": ">=0.18.2",
+    "minecraft": "~1.21.11",
     "java": ">=21",
     "fabric-api": "*"
   }
