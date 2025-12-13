@@ -9,6 +9,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import net.minecraft.command.DefaultPermissions;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -33,7 +34,7 @@ public class WarpRemoveCommand {
 		}
 
 		String name = StringArgumentType.getString(context, "name");
-    boolean isPlayerOp = player.hasPermissionLevel(4);
+    boolean isPlayerOp = player.getPermissions().hasPermission(DefaultPermissions.OWNERS);
 		WarpLocationsState locations = WarpLocationsState.getServerState(source.getServer());
     
     RemoveResult result = locations.remove(player.getUuid(), name, isPlayerOp);

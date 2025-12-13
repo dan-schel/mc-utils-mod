@@ -9,6 +9,7 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
+import net.minecraft.command.DefaultPermissions;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -29,7 +30,7 @@ public class WarpLocationSuggestionProvider implements SuggestionProvider<Server
 			return builder.buildFuture();
 		}
 
-		boolean isPlayerOp = currentPlayer.hasPermissionLevel(4);
+		boolean isPlayerOp = currentPlayer.getPermissions().hasPermission(DefaultPermissions.OWNERS);
 		boolean includeGlobal = isPlayerOp || !this.hideGlobalWarpsUnlessOp;
     
 		for (String warpName : warpLocations.getPossibleWarps(currentPlayer.getUuid(), includeGlobal)) {
