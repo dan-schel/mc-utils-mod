@@ -1,6 +1,9 @@
 package com.danschellekens.mc.commands.warp;
 
 import com.danschellekens.mc.state.WarpLocationsState;
+
+import java.util.Set;
+
 import com.danschellekens.mc.state.WarpLocation;
 import com.danschellekens.mc.utils.CommandUtils;
 import com.danschellekens.mc.utils.WarpLocationSuggestionProvider;
@@ -42,7 +45,7 @@ public class WarpWhereCommand {
 		double z = location.getPosition().getZ() + 0.5;
 		float yaw = player.getYaw();
 		float pitch = player.getPitch();		
-		player.teleport(world, x, y, z, yaw, pitch);
+		player.teleport(world, x, y, z, Set.of(), yaw, pitch, true);
 
 		return CommandUtils.success(source, "Warped to \"" + name + "\".");
 	}

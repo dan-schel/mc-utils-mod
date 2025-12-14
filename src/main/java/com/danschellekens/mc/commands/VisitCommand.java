@@ -1,5 +1,7 @@
 package com.danschellekens.mc.commands;
 
+import java.util.Set;
+
 import com.danschellekens.mc.utils.CommandUtils;
 import com.danschellekens.mc.utils.PlayerSuggestionProvider;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -43,7 +45,7 @@ public class VisitCommand {
 		double z = target.getZ();
 		float yaw = player.getYaw();
 		float pitch = player.getPitch();		
-		player.teleport(world, x, y, z, yaw, pitch);
+		player.teleport(world, x, y, z, Set.of(), yaw, pitch, true);
 
 		target.sendMessageToClient(Text.literal(player.getName().getString() + " is visiting you."), false);
 
