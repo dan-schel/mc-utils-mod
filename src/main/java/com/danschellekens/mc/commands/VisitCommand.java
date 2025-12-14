@@ -37,7 +37,7 @@ public class VisitCommand {
 			return CommandUtils.failure(source, "You can't visit yourself.");
 		}
 
-		ServerWorld world = target.getServerWorld();
+		ServerWorld world = target.getEntityWorld();
 		double x = target.getX();
 		double y = target.getY();
 		double z = target.getZ();

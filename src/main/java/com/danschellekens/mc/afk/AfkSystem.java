@@ -92,7 +92,7 @@ public class AfkSystem {
 
   private void onNewPlayer(ServerPlayerEntity player) {
     getOrCreateStatus(player);
-    removeFromAfkTeam(player.getServer(), player.getNameForScoreboard());
+    removeFromAfkTeam(player.getEntityWorld().getServer(), player.getNameForScoreboard());
 
     int afkPlayers = getAfkPlayerCount();
     if (afkPlayers >= 1) {
@@ -102,7 +102,7 @@ public class AfkSystem {
   }
 
   private void onPlayerBecomesAfk(ServerPlayerEntity afkPlayer) {
-    MinecraftServer server = afkPlayer.getServer();
+    MinecraftServer server = afkPlayer.getEntityWorld().getServer();
 
     Text firstPerson = createBlueCenterText("You're marked as ", "AFK", ".");
     Text thirdPerson = createBlueCenterText(afkPlayer.getName().getString() + " is ", "AFK", ".");
@@ -117,7 +117,7 @@ public class AfkSystem {
   }
 
   private void onPlayerBecomesActive(ServerPlayerEntity activePlayer) {
-    MinecraftServer server = activePlayer.getServer();
+    MinecraftServer server = activePlayer.getEntityWorld().getServer();
 
     Text firstPerson = createBlueCenterText("You're no longer marked as ", "AFK", ".");
     Text thirdPerson = createBlueCenterText(activePlayer.getName().getString() + " is no longer ", "AFK", ".");
@@ -159,8 +159,7 @@ public class AfkSystem {
     String teamName = DansUtils.MOD_ID_SNAKE_CASE + "_afk";
 
     if (server.getScoreboard().getTeam(teamName) == null) {
-      server.getScoreboard().addTeam(teamName);
-      server.getScoreboard().getTeam(teamName).setColor(Formatting.BLUE);
+      server.getScoreboard().addTeam(teamName).setColor(Formatting.BLUE);
     }
 
     return server.getScoreboard().getTeam(teamName);
