@@ -36,11 +36,11 @@ public class WarpLocation {
 
   public static WarpLocation fromNbt(NbtCompound nbt) {
     BlockPos position = new BlockPos(
-      nbt.getInt("X"),
-      nbt.getInt("Y"),
-      nbt.getInt("Z")
+      nbt.getInt("X").orElseThrow(),
+      nbt.getInt("Y").orElseThrow(),
+      nbt.getInt("Z").orElseThrow()
     );
-    WarpLocationDimension dimension = WarpLocationDimension.valueOf(nbt.getString("Dimension"));
+    WarpLocationDimension dimension = WarpLocationDimension.valueOf(nbt.getString("Dimension").orElseThrow());
     return new WarpLocation(position, dimension);
   }
 
