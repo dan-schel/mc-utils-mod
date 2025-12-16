@@ -8,9 +8,9 @@ import java.util.Map.Entry;
 import com.danschellekens.mc.DansUtils;
 
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.PersistentState;
+import net.minecraft.world.PersistentStateType;
 import net.minecraft.world.World;
 
 public class WarpLocationsState extends PersistentState {
@@ -142,8 +142,8 @@ public class WarpLocationsState extends PersistentState {
     return result.toArray(new String[0]);
   }
 
-  @Override
-  public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+  public NbtCompound writeNbt() {
+    NbtCompound nbt = new NbtCompound();
     nbt.put("Global", this.global.toNbt());
     
     NbtCompound playerSpecificNbt = new NbtCompound();
@@ -156,27 +156,29 @@ public class WarpLocationsState extends PersistentState {
   }
 
   public static WarpLocationsState fromNbt(NbtCompound nbt) {
-    WarpLocationCollection global = WarpLocationCollection.fromNbt(nbt.getCompound("Global"));
+    WarpLocationCollection global = WarpLocationCollection.fromNbt(nbt.getCompound("Global").orElseThrow());
 
     HashMap<UUID, WarpLocationCollection> playerSpecific = new HashMap<>();
-    NbtCompound playerSpecificNbt = nbt.getCompound("PlayerSpecific");
+    NbtCompound playerSpecificNbt = nbt.getCompound("PlayerSpecific").orElseThrow();
     for (String key : playerSpecificNbt.getKeys()) {
-      playerSpecific.put(UUID.fromString(key), WarpLocationCollection.fromNbt(playerSpecificNbt.getCompound(key)));
+      playerSpecific.put(UUID.fromString(key), WarpLocationCollection.fromNbt(playerSpecificNbt.getCompound(key).orElseThrow()));
     }
 
     return new WarpLocationsState(global, playerSpecific);
   }
 
-  public static PersistentState.Type<WarpLocationsState> type = new PersistentState.Type<WarpLocationsState>(
-    () -> new WarpLocationsState(), 
-    (nbt, registryLookup) -> WarpLocationsState.fromNbt(nbt), 
+  public static final PersistentStateType<WarpLocationsState> TYPE = new PersistentStateType<WarpLocationsState>(
+    DansUtils.MOD_ID + "_warp_locations",
+    WarpLocationsState::new, 
+    NbtCompound.CODEC.xmap(WarpLocationsState::fromNbt, WarpLocationsState::writeNbt), 
     null
   );
  
+  @SuppressWarnings("null")
   public static WarpLocationsState getServerState(MinecraftServer server) {
     return server
       .getWorld(World.OVERWORLD)
       .getPersistentStateManager()
-      .getOrCreate(type, DansUtils.MOD_ID + "_warp_locations");
+      .getOrCreate(TYPE);
   }
 }

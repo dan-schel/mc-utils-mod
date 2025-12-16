@@ -10,6 +10,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import net.minecraft.command.DefaultPermissions;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -23,7 +24,7 @@ public class WarpAddCommand {
         .then(
           CommandManager
             .argument("global", BoolArgumentType.bool())
-            .requires(source -> source.hasPermissionLevel(4))
+            .requires(CommandManager.requirePermissionLevel(CommandManager.OWNERS_CHECK))
             .executes(WarpAddCommand::withGlobalArg)
         )
         .executes(WarpAddCommand::withoutGlobalArg)
@@ -57,7 +58,7 @@ public class WarpAddCommand {
     
     WarpLocation location = WarpLocation.fromWorld(player.getBlockPos(), source.getWorld());
 		WarpLocationsState locations = WarpLocationsState.getServerState(source.getServer());
-    boolean isPlayerOp = player.hasPermissionLevel(4);
+    boolean isPlayerOp = player.getPermissions().hasPermission(DefaultPermissions.OWNERS);
 
     AddResult result = locations.add(player.getUuid(), name, location, global, isPlayerOp);
 

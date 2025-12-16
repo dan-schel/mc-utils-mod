@@ -46,7 +46,7 @@ public class WarpLocationCollection {
   public static WarpLocationCollection fromNbt(NbtCompound nbt) {
     HashMap<String, WarpLocation> locations = new HashMap<>();
     for (String name : nbt.getKeys()) {
-      locations.put(name, WarpLocation.fromNbt(nbt.getCompound(name)));
+      locations.put(name, WarpLocation.fromNbt(nbt.getCompound(name).orElseThrow()));
     }
     return new WarpLocationCollection(locations);
   }

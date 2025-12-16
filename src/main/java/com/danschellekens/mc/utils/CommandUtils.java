@@ -1,5 +1,6 @@
 package com.danschellekens.mc.utils;
 
+import net.minecraft.command.DefaultPermissions;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -22,7 +23,7 @@ public class CommandUtils {
     source.sendFeedback(() -> Text.literal(message), true);
 
     for (ServerPlayerEntity onlinePlayer : source.getServer().getPlayerManager().getPlayerList()) {
-      if (onlinePlayer.hasPermissionLevel(4)) {
+      if (onlinePlayer.getPermissions().hasPermission(DefaultPermissions.OWNERS)) {
         continue;
       }
       if (player != null && onlinePlayer.getId() == player.getId()) {
