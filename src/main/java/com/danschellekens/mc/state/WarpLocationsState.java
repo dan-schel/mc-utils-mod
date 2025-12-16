@@ -170,10 +170,7 @@ public class WarpLocationsState extends PersistentState {
   public static final PersistentStateType<WarpLocationsState> TYPE = new PersistentStateType<WarpLocationsState>(
     DansUtils.MOD_ID + "_warp_locations",
     WarpLocationsState::new, 
-    
-    // TODO: [DS] I'm very suspicious that this will work... but worth a shot :)
     NbtCompound.CODEC.xmap(WarpLocationsState::fromNbt, WarpLocationsState::writeNbt), 
-
     null
   );
  
