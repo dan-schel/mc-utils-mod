@@ -4,10 +4,12 @@
 
 - `/visit <username>` command to teleport to another player.
 - `/warp <place>` and `/warp add <name> [global]` command to teleport to a pre-defined location.
+- `/unwarp` and `/unvisit` commands to return to your previous location.
 - `/daytime` command to skip the night.
 - `/sunshine` command to clear the weather.
 - Tracking players which haven't moved for >5 mins and inform other players on the server that they're AFK (plus manual `/afk` command).
 - Prevent creepers, ghasts, and enderman destroying/placing blocks without disabling `mobGriefing` (which would also disable villagers being able to farm, etc.).
+- Disables the `/clear` command.
 
 ## Getting set up (VSCode)
 
