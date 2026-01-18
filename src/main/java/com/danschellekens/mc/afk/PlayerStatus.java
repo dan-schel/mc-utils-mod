@@ -3,13 +3,20 @@ package com.danschellekens.mc.afk;
 import java.time.Instant;
 
 public class PlayerStatus {
+
   boolean isDeclaredAfk;
   double yaw;
   double pitch;
   Instant lastMovementTime;
   String scoreHolderName;
 
-  public PlayerStatus(boolean isDeclaredAfk, double yaw, double pitch, Instant lastMovementTime, String scoreHolderName) {
+  public PlayerStatus(
+    boolean isDeclaredAfk,
+    double yaw,
+    double pitch,
+    Instant lastMovementTime,
+    String scoreHolderName
+  ) {
     this.isDeclaredAfk = isDeclaredAfk;
     this.yaw = yaw;
     this.pitch = pitch;
@@ -43,7 +50,12 @@ public class PlayerStatus {
   }
 
   boolean isInactive() {
-    return lastMovementTime == null || Instant.now().minusSeconds(AfkSystem.AFK_TIMEOUT_SECONDS).isAfter(lastMovementTime);
+    return (
+      lastMovementTime == null ||
+      Instant.now()
+        .minusSeconds(AfkSystem.AFK_TIMEOUT_SECONDS)
+        .isAfter(lastMovementTime)
+    );
   }
 
   String getScoreHolderName() {

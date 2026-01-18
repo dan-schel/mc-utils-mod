@@ -5,6 +5,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class WarpLocation {
+
   BlockPos position;
   WarpLocationDimension dimension;
 
@@ -22,7 +23,15 @@ public class WarpLocation {
   }
 
   public String getDisplayString() {
-    return position.getX() + ", " + position.getY() + ", " + position.getZ() + " in " + dimension.getDisplayString();
+    return (
+      position.getX() +
+      ", " +
+      position.getY() +
+      ", " +
+      position.getZ() +
+      " in " +
+      dimension.getDisplayString()
+    );
   }
 
   public NbtCompound toNbt() {
@@ -40,11 +49,16 @@ public class WarpLocation {
       nbt.getInt("Y").orElseThrow(),
       nbt.getInt("Z").orElseThrow()
     );
-    WarpLocationDimension dimension = WarpLocationDimension.valueOf(nbt.getString("Dimension").orElseThrow());
+    WarpLocationDimension dimension = WarpLocationDimension.valueOf(
+      nbt.getString("Dimension").orElseThrow()
+    );
     return new WarpLocation(position, dimension);
   }
 
   public static WarpLocation fromWorld(BlockPos position, World world) {
-    return new WarpLocation(position, WarpLocationDimension.fromWorldRegistryKey(world.getRegistryKey()));
+    return new WarpLocation(
+      position,
+      WarpLocationDimension.fromWorldRegistryKey(world.getRegistryKey())
+    );
   }
 }

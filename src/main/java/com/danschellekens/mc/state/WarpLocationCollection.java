@@ -1,10 +1,10 @@
 package com.danschellekens.mc.state;
 
 import java.util.HashMap;
-
 import net.minecraft.nbt.NbtCompound;
 
 public class WarpLocationCollection {
+
   private HashMap<String, WarpLocation> locations;
 
   public WarpLocationCollection(HashMap<String, WarpLocation> locations) {
@@ -46,7 +46,10 @@ public class WarpLocationCollection {
   public static WarpLocationCollection fromNbt(NbtCompound nbt) {
     HashMap<String, WarpLocation> locations = new HashMap<>();
     for (String name : nbt.getKeys()) {
-      locations.put(name, WarpLocation.fromNbt(nbt.getCompound(name).orElseThrow()));
+      locations.put(
+        name,
+        WarpLocation.fromNbt(nbt.getCompound(name).orElseThrow())
+      );
     }
     return new WarpLocationCollection(locations);
   }

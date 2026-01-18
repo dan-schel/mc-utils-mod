@@ -1,13 +1,11 @@
 package com.danschellekens.mc.state;
 
+import com.danschellekens.mc.DansUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.Map.Entry;
-
-import com.danschellekens.mc.DansUtils;
-
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.PersistentState;
@@ -15,6 +13,7 @@ import net.minecraft.world.PersistentStateType;
 import net.minecraft.world.World;
 
 public class WarpLocationsState extends PersistentState {
+
   public static final int MAX_WARP_LOCATIONS_PER_PLAYER = 5;
 
   public enum AddResult {
@@ -22,14 +21,14 @@ public class WarpLocationsState extends PersistentState {
     UPDATED_EXISTING,
     CLASHES_WITH_GLOBAL,
     REQUIRES_OP,
-    ALREADY_REACHED_MAXIMUM
+    ALREADY_REACHED_MAXIMUM,
   }
 
   public enum RemoveResult {
     REMOVED_GLOBAL,
     REMOVED_PLAYER_SPECIFIC,
     NOT_FOUND,
-    REQUIRES_OP
+    REQUIRES_OP,
   }
 
   private WarpLocationCollection global;
@@ -43,14 +42,24 @@ public class WarpLocationsState extends PersistentState {
     this.playerSpecific = new HashMap<>();
     this.playerPriorLocations = new HashMap<>();
   }
- 
-  private WarpLocationsState(WarpLocationCollection global, HashMap<UUID, WarpLocationCollection> playerSpecific, HashMap<UUID, WarpLocation> playerPriorLocations) {
+
+  private WarpLocationsState(
+    WarpLocationCollection global,
+    HashMap<UUID, WarpLocationCollection> playerSpecific,
+    HashMap<UUID, WarpLocation> playerPriorLocations
+  ) {
     this.global = global;
     this.playerSpecific = playerSpecific;
     this.playerPriorLocations = playerPriorLocations;
   }
 
-  public AddResult add(UUID playerUUID, String name, WarpLocation location, boolean global, boolean isPlayerOp) {
+  public AddResult add(
+    UUID playerUUID,
+    String name,
+    WarpLocation location,
+    boolean global,
+    boolean isPlayerOp
+  ) {
     if (global) {
       if (isPlayerOp) {
         boolean alreadyExisted = this.global.contains(name);
@@ -60,14 +69,14 @@ public class WarpLocationsState extends PersistentState {
           collection.remove(name);
         }
         this.markDirty();
-        
-        return alreadyExisted ? AddResult.UPDATED_EXISTING : AddResult.ADDED_NEW;
-      }
-      else {
+
+        return alreadyExisted
+          ? AddResult.UPDATED_EXISTING
+          : AddResult.ADDED_NEW;
+      } else {
         return AddResult.REQUIRES_OP;
       }
-    } 
-    else {
+    } else {
       if (this.global.contains(name)) {
         return AddResult.CLASHES_WITH_GLOBAL;
       }
@@ -77,13 +86,15 @@ public class WarpLocationsState extends PersistentState {
         collection = new WarpLocationCollection(new HashMap<>());
         this.playerSpecific.put(playerUUID, collection);
       }
-      
+
       boolean alreadyExisted = collection.contains(name);
 
-      if (collection.size() >= MAX_WARP_LOCATIONS_PER_PLAYER && !alreadyExisted) {
+      if (
+        collection.size() >= MAX_WARP_LOCATIONS_PER_PLAYER && !alreadyExisted
+      ) {
         return AddResult.ALREADY_REACHED_MAXIMUM;
       }
-      
+
       collection.add(name, location);
       this.markDirty();
 
@@ -97,8 +108,7 @@ public class WarpLocationsState extends PersistentState {
         this.global.remove(name);
         this.markDirty();
         return RemoveResult.REMOVED_GLOBAL;
-      }
-      else {
+      } else {
         return RemoveResult.REQUIRES_OP;
       }
     }
@@ -165,16 +175,28 @@ public class WarpLocationsState extends PersistentState {
   public NbtCompound writeNbt() {
     NbtCompound nbt = new NbtCompound();
     nbt.put("Global", this.global.toNbt());
-    
+
     NbtCompound playerSpecificNbt = new NbtCompound();
-    for (Entry<UUID, WarpLocationCollection> entry : this.playerSpecific.entrySet()) {
-      playerSpecificNbt.put(entry.getKey().toString(), entry.getValue().toNbt());
+    for (Entry<
+      UUID,
+      WarpLocationCollection
+    > entry : this.playerSpecific.entrySet()) {
+      playerSpecificNbt.put(
+        entry.getKey().toString(),
+        entry.getValue().toNbt()
+      );
     }
     nbt.put("PlayerSpecific", playerSpecificNbt);
 
     NbtCompound playerPriorLocationsNbt = new NbtCompound();
-    for (Entry<UUID, WarpLocation> entry : this.playerPriorLocations.entrySet()) {
-      playerPriorLocationsNbt.put(entry.getKey().toString(), entry.getValue().toNbt());
+    for (Entry<
+      UUID,
+      WarpLocation
+    > entry : this.playerPriorLocations.entrySet()) {
+      playerPriorLocationsNbt.put(
+        entry.getKey().toString(),
+        entry.getValue().toNbt()
+      );
     }
     nbt.put("PlayerPriorLocations", playerPriorLocationsNbt);
 
@@ -182,30 +204,50 @@ public class WarpLocationsState extends PersistentState {
   }
 
   public static WarpLocationsState fromNbt(NbtCompound nbt) {
-    WarpLocationCollection global = WarpLocationCollection.fromNbt(nbt.getCompound("Global").orElseThrow());
+    WarpLocationCollection global = WarpLocationCollection.fromNbt(
+      nbt.getCompound("Global").orElseThrow()
+    );
 
     HashMap<UUID, WarpLocationCollection> playerSpecific = new HashMap<>();
-    NbtCompound playerSpecificNbt = nbt.getCompound("PlayerSpecific").orElseThrow();
+    NbtCompound playerSpecificNbt = nbt
+      .getCompound("PlayerSpecific")
+      .orElseThrow();
     for (String key : playerSpecificNbt.getKeys()) {
-      playerSpecific.put(UUID.fromString(key), WarpLocationCollection.fromNbt(playerSpecificNbt.getCompound(key).orElseThrow()));
+      playerSpecific.put(
+        UUID.fromString(key),
+        WarpLocationCollection.fromNbt(
+          playerSpecificNbt.getCompound(key).orElseThrow()
+        )
+      );
     }
 
     HashMap<UUID, WarpLocation> playerPriorLocations = new HashMap<>();
-    NbtCompound playerPriorLocationsNbt = nbt.getCompound("PlayerPriorLocations").orElse(new NbtCompound());
+    NbtCompound playerPriorLocationsNbt = nbt
+      .getCompound("PlayerPriorLocations")
+      .orElse(new NbtCompound());
     for (String key : playerPriorLocationsNbt.getKeys()) {
-      playerPriorLocations.put(UUID.fromString(key), WarpLocation.fromNbt(playerPriorLocationsNbt.getCompound(key).orElseThrow()));
+      playerPriorLocations.put(
+        UUID.fromString(key),
+        WarpLocation.fromNbt(
+          playerPriorLocationsNbt.getCompound(key).orElseThrow()
+        )
+      );
     }
 
     return new WarpLocationsState(global, playerSpecific, playerPriorLocations);
   }
 
-  public static final PersistentStateType<WarpLocationsState> TYPE = new PersistentStateType<WarpLocationsState>(
-    DansUtils.MOD_ID + "_warp_locations",
-    WarpLocationsState::new, 
-    NbtCompound.CODEC.xmap(WarpLocationsState::fromNbt, WarpLocationsState::writeNbt), 
-    null
-  );
- 
+  public static final PersistentStateType<WarpLocationsState> TYPE =
+    new PersistentStateType<WarpLocationsState>(
+      DansUtils.MOD_ID + "_warp_locations",
+      WarpLocationsState::new,
+      NbtCompound.CODEC.xmap(
+        WarpLocationsState::fromNbt,
+        WarpLocationsState::writeNbt
+      ),
+      null
+    );
+
   @SuppressWarnings("null")
   public static WarpLocationsState getServerState(MinecraftServer server) {
     return server

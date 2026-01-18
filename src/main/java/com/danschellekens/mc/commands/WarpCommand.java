@@ -8,9 +8,10 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
 public class WarpCommand {
-  public static LiteralArgumentBuilder<ServerCommandSource> COMMAND = CommandManager
-    .literal("warp")
-    .then(WarpWhereCommand.COMMAND)
-    .then(WarpAddCommand.COMMAND)
-    .then(WarpRemoveCommand.COMMAND);
+
+  public static LiteralArgumentBuilder<ServerCommandSource> COMMAND =
+    CommandManager.literal("warp")
+      .then(WarpWhereCommand.COMMAND)
+      .then(WarpAddCommand.COMMAND)
+      .then(WarpRemoveCommand.COMMAND);
 }
