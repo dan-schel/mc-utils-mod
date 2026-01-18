@@ -27,4 +27,3 @@ jobs:
           file: "build/libs/*.jar"
           draft: false
           tag_name: ${{ steps.version.outputs.MOD_VERSION }}
-          update_latest_release: true
