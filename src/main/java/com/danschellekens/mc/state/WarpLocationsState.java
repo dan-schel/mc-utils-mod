@@ -172,6 +172,12 @@ public class WarpLocationsState extends PersistentState {
     }
     nbt.put("PlayerSpecific", playerSpecificNbt);
 
+    NbtCompound playerPriorLocationsNbt = new NbtCompound();
+    for (Entry<UUID, WarpLocation> entry : this.playerPriorLocations.entrySet()) {
+      playerPriorLocationsNbt.put(entry.getKey().toString(), entry.getValue().toNbt());
+    }
+    nbt.put("PlayerPriorLocations", playerPriorLocationsNbt);
+
     return nbt;
   }
 
