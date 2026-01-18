@@ -11,6 +11,7 @@ import com.danschellekens.mc.afk.AfkSystem;
 import com.danschellekens.mc.commands.AfkCommand;
 import com.danschellekens.mc.commands.DaytimeCommand;
 import com.danschellekens.mc.commands.SunshineCommand;
+import com.danschellekens.mc.commands.UnteleportCommand;
 import com.danschellekens.mc.commands.VisitCommand;
 import com.danschellekens.mc.commands.WarpCommand;
 
@@ -28,6 +29,8 @@ public class DansUtils implements ModInitializer {
 			dispatcher.register(SunshineCommand.COMMAND);
 			dispatcher.register(VisitCommand.COMMAND);
 			dispatcher.register(WarpCommand.COMMAND);
+			dispatcher.register(UnteleportCommand.COMMAND_UNVISIT);
+			dispatcher.register(UnteleportCommand.COMMAND_UNWARP);
 		});
 
 		ServerTickEvents.END_SERVER_TICK.register(server -> {

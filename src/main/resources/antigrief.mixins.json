@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.danschellekens.mc.antigrief",
+  "package": "com.danschellekens.mc.antigrief.mixins",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "DefuseCreeperMixin",
