@@ -1,6 +1,6 @@
 # Dan's Minecraft Utils Mod
 
-A server-side Minecraft mod which adds a few custom commands, and prevents certain mobs griefing the world. Requires/powered by Fabric.
+A server-side Minecraft mod which adds a few custom commands and prevents certain mobs griefing the world. Requires/powered by Fabric.
 
 ⭐ Download the latest release [from here](https://github.com/dan-schel/mc-utils-mod/releases). ⭐
 
@@ -17,7 +17,7 @@ A server-side Minecraft mod which adds a few custom commands, and prevents certa
 
 ## Development Guide
 
-### Getting set up (VSCode)
+### Getting set up (VS Code)
 
 To develop the mod, you'll need to install the [Extension Pack for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack), and then run:
 
