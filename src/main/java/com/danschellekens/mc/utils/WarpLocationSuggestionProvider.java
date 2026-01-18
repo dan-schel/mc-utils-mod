@@ -14,29 +14,29 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public class WarpLocationSuggestionProvider implements SuggestionProvider<ServerCommandSource>  {
-	boolean hideGlobalWarpsUnlessOp;
+  boolean hideGlobalWarpsUnlessOp;
 
-	public WarpLocationSuggestionProvider(boolean hideGlobalWarpsUnlessOp) {
-		this.hideGlobalWarpsUnlessOp = hideGlobalWarpsUnlessOp;
-	}
+  public WarpLocationSuggestionProvider(boolean hideGlobalWarpsUnlessOp) {
+    this.hideGlobalWarpsUnlessOp = hideGlobalWarpsUnlessOp;
+  }
 
   @Override
-	public CompletableFuture<Suggestions> getSuggestions(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder) throws CommandSyntaxException {
-		ServerCommandSource source = context.getSource();
+  public CompletableFuture<Suggestions> getSuggestions(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder) throws CommandSyntaxException {
+    ServerCommandSource source = context.getSource();
     WarpLocationsState warpLocations = WarpLocationsState.getServerState(source.getServer());
 
     ServerPlayerEntity currentPlayer = source.getPlayer();
-		if (currentPlayer == null) {
-			return builder.buildFuture();
-		}
+    if (currentPlayer == null) {
+      return builder.buildFuture();
+    }
 
-		boolean isPlayerOp = currentPlayer.getPermissions().hasPermission(DefaultPermissions.OWNERS);
-		boolean includeGlobal = isPlayerOp || !this.hideGlobalWarpsUnlessOp;
+    boolean isPlayerOp = currentPlayer.getPermissions().hasPermission(DefaultPermissions.OWNERS);
+    boolean includeGlobal = isPlayerOp || !this.hideGlobalWarpsUnlessOp;
     
-		for (String warpName : warpLocations.getPossibleWarps(currentPlayer.getUuid(), includeGlobal)) {
-			builder.suggest(warpName);
-		}
+    for (String warpName : warpLocations.getPossibleWarps(currentPlayer.getUuid(), includeGlobal)) {
+      builder.suggest(warpName);
+    }
 
-		return builder.buildFuture();
-	}
+    return builder.buildFuture();
+  }
 }

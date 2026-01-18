@@ -19,12 +19,12 @@ import net.minecraft.util.Formatting;
 @Mixin(ClearCommand.class)
 public class DisableClearCommandMixin {
   @Overwrite()
-	private static int execute(ServerCommandSource source, Collection<ServerPlayerEntity> targets, Predicate<ItemStack> item, int maxCount) throws CommandSyntaxException {
+  private static int execute(ServerCommandSource source, Collection<ServerPlayerEntity> targets, Predicate<ItemStack> item, int maxCount) throws CommandSyntaxException {
     return CommandUtils.success(
       source, 
       Text.literal("Did absolutely nothing (command is disabled)."), 
       Text.literal(source.getName() + " attempted to run disabled clear command.").formatted(Formatting.GRAY, Formatting.ITALIC), 
       false
     );
-	}
+  }
 }

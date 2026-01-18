@@ -28,15 +28,15 @@ public class UnteleportCommand {
     .executes(UnteleportCommand::execute);
 
   public static int execute(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-		ServerCommandSource source = context.getSource();
-		ServerPlayerEntity player = source.getPlayer();
-		
-		if (player == null) {
-			return CommandUtils.failure(source, "Not executed by a player.");
-		}
+    ServerCommandSource source = context.getSource();
+    ServerPlayerEntity player = source.getPlayer();
     
-		WarpLocationsState locations = WarpLocationsState.getServerState(source.getServer());
-		Optional<WarpLocation> locationOptional = locations.getPriorLocation(player.getUuid());
+    if (player == null) {
+      return CommandUtils.failure(source, "Not executed by a player.");
+    }
+    
+    WarpLocationsState locations = WarpLocationsState.getServerState(source.getServer());
+    Optional<WarpLocation> locationOptional = locations.getPriorLocation(player.getUuid());
 
     if (locationOptional.isEmpty()) {
       Text message = Text.literal("No prior location saved. Should be used after a ")
@@ -50,15 +50,15 @@ public class UnteleportCommand {
 
     WarpLocation location = locationOptional.orElseThrow();
     ServerWorld world = source.getServer().getWorld(location.getDimension().getWorldRegistryKey());
-		double x = location.getPosition().getX() + 0.5;
-		double y = location.getPosition().getY();
-		double z = location.getPosition().getZ() + 0.5;
-		float yaw = player.getYaw();
-		float pitch = player.getPitch();		
-		player.teleport(world, x, y, z, Set.of(), yaw, pitch, true);
+    double x = location.getPosition().getX() + 0.5;
+    double y = location.getPosition().getY();
+    double z = location.getPosition().getZ() + 0.5;
+    float yaw = player.getYaw();
+    float pitch = player.getPitch();		
+    player.teleport(world, x, y, z, Set.of(), yaw, pitch, true);
 
     locations.deletePriorLocation(player.getUuid());
 
-		return CommandUtils.success(source, "Returned to prior location.");
-	}
+    return CommandUtils.success(source, "Returned to prior location.");
+  }
 }

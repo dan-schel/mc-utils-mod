@@ -11,6 +11,6 @@ public class WarpCommand {
   public static LiteralArgumentBuilder<ServerCommandSource> COMMAND = CommandManager
     .literal("warp")
     .then(WarpWhereCommand.COMMAND)
-		.then(WarpAddCommand.COMMAND)
-		.then(WarpRemoveCommand.COMMAND);
+    .then(WarpAddCommand.COMMAND)
+    .then(WarpRemoveCommand.COMMAND);
 }

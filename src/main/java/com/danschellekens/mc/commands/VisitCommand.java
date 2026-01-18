@@ -28,33 +28,33 @@ public class VisitCommand {
     );
 
   public static int execute(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-		ServerCommandSource source = context.getSource();
-		ServerPlayerEntity player = source.getPlayer();
-		
-		if (player == null) {
-			return CommandUtils.failure(source, "Not executed by a player.");
-		}
+    ServerCommandSource source = context.getSource();
+    ServerPlayerEntity player = source.getPlayer();
+    
+    if (player == null) {
+      return CommandUtils.failure(source, "Not executed by a player.");
+    }
 
-		ServerPlayerEntity target = EntityArgumentType.getPlayer(context, "who");
-		
-		if (player.getId() == target.getId()) {
-			return CommandUtils.failure(source, "You can't visit yourself.");
-		}
+    ServerPlayerEntity target = EntityArgumentType.getPlayer(context, "who");
+    
+    if (player.getId() == target.getId()) {
+      return CommandUtils.failure(source, "You can't visit yourself.");
+    }
 
-		WarpLocationsState locations = WarpLocationsState.getServerState(source.getServer());
+    WarpLocationsState locations = WarpLocationsState.getServerState(source.getServer());
     WarpLocation priorLocation = WarpLocation.fromWorld(player.getBlockPos(), player.getEntityWorld());
-		locations.savePriorLocation(player.getUuid(), priorLocation);
+    locations.savePriorLocation(player.getUuid(), priorLocation);
 
-		ServerWorld world = target.getEntityWorld();
-		double x = target.getX();
-		double y = target.getY();
-		double z = target.getZ();
-		float yaw = player.getYaw();
-		float pitch = player.getPitch();		
-		player.teleport(world, x, y, z, Set.of(), yaw, pitch, true);
+    ServerWorld world = target.getEntityWorld();
+    double x = target.getX();
+    double y = target.getY();
+    double z = target.getZ();
+    float yaw = player.getYaw();
+    float pitch = player.getPitch();		
+    player.teleport(world, x, y, z, Set.of(), yaw, pitch, true);
 
-		target.sendMessageToClient(Text.literal(player.getName().getString() + " is visiting you."), false);
+    target.sendMessageToClient(Text.literal(player.getName().getString() + " is visiting you."), false);
 
-		return CommandUtils.successWithUndoCommand(source, "Visiting " + target.getName().getString() + ".", "/unvisit");
-	}
+    return CommandUtils.successWithUndoCommand(source, "Visiting " + target.getName().getString() + ".", "/unvisit");
+  }
 }

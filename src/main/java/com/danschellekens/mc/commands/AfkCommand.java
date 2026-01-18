@@ -16,16 +16,16 @@ public class AfkCommand {
     .executes(AfkCommand::execute);
 
   public static int execute(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-		ServerCommandSource source = context.getSource();
-		ServerPlayerEntity player = source.getPlayer();
-		
-		if (player == null) {
-			return CommandUtils.failure(source, "Not executed by a player.");
-		}
+    ServerCommandSource source = context.getSource();
+    ServerPlayerEntity player = source.getPlayer();
+    
+    if (player == null) {
+      return CommandUtils.failure(source, "Not executed by a player.");
+    }
 
-		AfkSystem.getInstance().manuallyDeclareAfk(player);
+    AfkSystem.getInstance().manuallyDeclareAfk(player);
 
-		// Intentionally don't send feedback - The AfkSystem will broadcast to everyone, including this player, that they're AFK.
-		return 1;
-	}
+    // Intentionally don't send feedback - The AfkSystem will broadcast to everyone, including this player, that they're AFK.
+    return 1;
+  }
 }

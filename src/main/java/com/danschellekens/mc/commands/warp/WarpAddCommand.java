@@ -32,24 +32,24 @@ public class WarpAddCommand {
 
   private static int withGlobalArg(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
     return WarpAddCommand.execute(context, true);
-	}
+  }
 
   private static int withoutGlobalArg(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
     return WarpAddCommand.execute(context, false);
-	}
+  }
 
-	private static int execute(CommandContext<ServerCommandSource> context, boolean hasGlobalArgument) throws CommandSyntaxException {
-		ServerCommandSource source = context.getSource();
+  private static int execute(CommandContext<ServerCommandSource> context, boolean hasGlobalArgument) throws CommandSyntaxException {
+    ServerCommandSource source = context.getSource();
     ServerPlayerEntity player = source.getPlayer();
-		
-		if (player == null) {
+    
+    if (player == null) {
       return CommandUtils.failure(source, "Not executed by a player.");
-		}
+    }
 
-		String name = StringArgumentType.getString(context, "name");
-		if (!name.matches("^[a-z][a-z0-9_]{0,49}$")) {
+    String name = StringArgumentType.getString(context, "name");
+    if (!name.matches("^[a-z][a-z0-9_]{0,49}$")) {
       return CommandUtils.failure(source, "Invalid warp point name.");
-		}
+    }
 
     boolean global = false;
     if (hasGlobalArgument) {
@@ -57,7 +57,7 @@ public class WarpAddCommand {
     }
     
     WarpLocation location = WarpLocation.fromWorld(player.getBlockPos(), source.getWorld());
-		WarpLocationsState locations = WarpLocationsState.getServerState(source.getServer());
+    WarpLocationsState locations = WarpLocationsState.getServerState(source.getServer());
     boolean isPlayerOp = player.getPermissions().hasPermission(DefaultPermissions.OWNERS);
 
     AddResult result = locations.add(player.getUuid(), name, location, global, isPlayerOp);
@@ -76,5 +76,5 @@ public class WarpAddCommand {
       default:
         throw new RuntimeException("Unknown AddResult value.");
     }
-	}
+  }
 }

@@ -14,7 +14,7 @@ public class DefuseGhastMixin {
   private int fireballStrength;
 
   @Inject(method = "getFireballStrength", at = @At("HEAD"))
-	private void defuseOnGetFireballStrength(CallbackInfoReturnable<Integer> info) {
+  private void defuseOnGetFireballStrength(CallbackInfoReturnable<Integer> info) {
     this.fireballStrength = 0;
-	}
+  }
 }

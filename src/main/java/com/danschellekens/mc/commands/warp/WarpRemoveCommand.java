@@ -20,22 +20,22 @@ public class WarpRemoveCommand {
     .then(
       CommandManager
         .argument("name", StringArgumentType.word())
-		    .suggests(new WarpLocationSuggestionProvider(true))
+        .suggests(new WarpLocationSuggestionProvider(true))
         .executes(WarpRemoveCommand::execute)
     );
 
 
-	private static int execute(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-		ServerCommandSource source = context.getSource();
+  private static int execute(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+    ServerCommandSource source = context.getSource();
     ServerPlayerEntity player = source.getPlayer();
-		
-		if (player == null) {
+    
+    if (player == null) {
       return CommandUtils.failure(source, "Not executed by a player.");
-		}
+    }
 
-		String name = StringArgumentType.getString(context, "name");
+    String name = StringArgumentType.getString(context, "name");
     boolean isPlayerOp = player.getPermissions().hasPermission(DefaultPermissions.OWNERS);
-		WarpLocationsState locations = WarpLocationsState.getServerState(source.getServer());
+    WarpLocationsState locations = WarpLocationsState.getServerState(source.getServer());
     
     RemoveResult result = locations.remove(player.getUuid(), name, isPlayerOp);
 
@@ -51,5 +51,5 @@ public class WarpRemoveCommand {
       default:
         throw new RuntimeException("Unknown RemoveResult value.");
     }
-	}
+  }
 }

@@ -12,7 +12,7 @@ public class PreventEndermanPickUpBlockMixin {
   // Instead of @Inject to add code to a method, @Overwrite replaces the entire
   // method body with our own code. The method signature must match exactly.
   @Overwrite()
-	public boolean canStart() {
+  public boolean canStart() {
     return false;
-	}
+  }
 }

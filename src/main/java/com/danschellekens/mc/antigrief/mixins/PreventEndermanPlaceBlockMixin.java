@@ -7,7 +7,7 @@ import net.minecraft.entity.mob.EndermanEntity;
 @Mixin(EndermanEntity.PlaceBlockGoal.class)
 public class PreventEndermanPlaceBlockMixin {
   @Overwrite()
-	public boolean canStart() {
+  public boolean canStart() {
     return false;
-	}
+  }
 }

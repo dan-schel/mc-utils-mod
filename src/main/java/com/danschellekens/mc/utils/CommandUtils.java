@@ -48,16 +48,16 @@ public class CommandUtils {
   }
 
   public static int successWithUndoCommand(ServerCommandSource source, String message, String undoCommand) {
-		Text personalMessage = Text.literal(message + " (Undo with ")
+    Text personalMessage = Text.literal(message + " (Undo with ")
       .append(Text.literal(undoCommand).formatted(Formatting.AQUA))
       .append(Text.literal(".)"));
 
     return CommandUtils.success(
-			source, 
-			personalMessage, 
-			thirdPartyFormattedMessage(source, message), 
-			false
-		);
+      source, 
+      personalMessage, 
+      thirdPartyFormattedMessage(source, message), 
+      false
+    );
   }
 
   private static Text thirdPartyFormattedMessage(ServerCommandSource source, String message) {

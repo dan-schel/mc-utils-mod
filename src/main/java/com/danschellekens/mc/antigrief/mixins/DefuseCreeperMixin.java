@@ -18,7 +18,7 @@ public class DefuseCreeperMixin {
   // method must match the signature of it's target with the addition of a 
   // CallbackInfo parameter at the end. In this case, explode() has no arguments.
   @Inject(method = "explode", at = @At("HEAD"))
-	private void defuseOnExplode(CallbackInfo info) {
+  private void defuseOnExplode(CallbackInfo info) {
     this.explosionRadius = 0;
-	}
+  }
 }

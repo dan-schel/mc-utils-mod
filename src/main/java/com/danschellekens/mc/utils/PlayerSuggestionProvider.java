@@ -20,20 +20,20 @@ public class PlayerSuggestionProvider implements SuggestionProvider<ServerComman
   }
 
   @Override
-	public CompletableFuture<Suggestions> getSuggestions(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder) throws CommandSyntaxException {
-		ServerCommandSource source = context.getSource();
-		Collection<String> playerNames = source.getPlayerNames();
+  public CompletableFuture<Suggestions> getSuggestions(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder) throws CommandSyntaxException {
+    ServerCommandSource source = context.getSource();
+    Collection<String> playerNames = source.getPlayerNames();
     
     ServerPlayerEntity currentPlayer = source.getPlayer();
     
-		for (String playerName : playerNames) {
+    for (String playerName : playerNames) {
       if (!includeSelf && currentPlayer != null && playerName.equals(currentPlayer.getName().getString())) {
         continue;
       }
 
-			builder.suggest(playerName);
-		}
+      builder.suggest(playerName);
+    }
 
-		return builder.buildFuture();
-	}
+    return builder.buildFuture();
+  }
 }

@@ -15,17 +15,17 @@ public class DaytimeCommand {
     .executes(DaytimeCommand::execute);
 
   public static int execute(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-		ServerCommandSource source = context.getSource();
-		ServerWorld world = source.getWorld();
+    ServerCommandSource source = context.getSource();
+    ServerWorld world = source.getWorld();
 
-		long currentTime = world.getTimeOfDay() % 24000;
+    long currentTime = world.getTimeOfDay() % 24000;
 
-		if (currentTime < 10000) {
-			return CommandUtils.failure(source, "It isn't night time.");
-		}
+    if (currentTime < 10000) {
+      return CommandUtils.failure(source, "It isn't night time.");
+    }
 
-		world.setTimeOfDay(0);
+    world.setTimeOfDay(0);
 
-		return CommandUtils.success(source, "Skipped to daytime.", true);
-	}
+    return CommandUtils.success(source, "Skipped to daytime.", true);
+  }
 }
