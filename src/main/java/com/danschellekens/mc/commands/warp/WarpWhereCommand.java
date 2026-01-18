@@ -39,6 +39,9 @@ public class WarpWhereCommand {
 			return CommandUtils.failure(source, "Warp point \"" + name + "\" not found.");
 		}
 
+    WarpLocation priorLocation = WarpLocation.fromWorld(player.getBlockPos(), player.getEntityWorld());
+		locations.savePriorLocation(player.getUuid(), priorLocation);
+
 		ServerWorld world = source.getServer().getWorld(location.getDimension().getWorldRegistryKey());
 		double x = location.getPosition().getX() + 0.5;
 		double y = location.getPosition().getY();
@@ -47,6 +50,6 @@ public class WarpWhereCommand {
 		float pitch = player.getPitch();		
 		player.teleport(world, x, y, z, Set.of(), yaw, pitch, true);
 
-		return CommandUtils.success(source, "Warped to \"" + name + "\".");
+		return CommandUtils.successWithUndoCommand(source, "Warped to \"" + name + "\".", "/unwarp");
 	}
 }

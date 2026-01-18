@@ -26,6 +26,6 @@ public class DaytimeCommand {
 
 		world.setTimeOfDay(0);
 
-		return CommandUtils.successAndTellEveryone(source, "Skipped to daytime.");
+		return CommandUtils.success(source, "Skipped to daytime.", true);
 	}
 }

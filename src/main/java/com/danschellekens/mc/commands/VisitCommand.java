@@ -2,6 +2,8 @@ package com.danschellekens.mc.commands;
 
 import java.util.Set;
 
+import com.danschellekens.mc.state.WarpLocation;
+import com.danschellekens.mc.state.WarpLocationsState;
 import com.danschellekens.mc.utils.CommandUtils;
 import com.danschellekens.mc.utils.PlayerSuggestionProvider;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -39,6 +41,10 @@ public class VisitCommand {
 			return CommandUtils.failure(source, "You can't visit yourself.");
 		}
 
+		WarpLocationsState locations = WarpLocationsState.getServerState(source.getServer());
+    WarpLocation priorLocation = WarpLocation.fromWorld(player.getBlockPos(), player.getEntityWorld());
+		locations.savePriorLocation(player.getUuid(), priorLocation);
+
 		ServerWorld world = target.getEntityWorld();
 		double x = target.getX();
 		double y = target.getY();
@@ -49,6 +55,6 @@ public class VisitCommand {
 
 		target.sendMessageToClient(Text.literal(player.getName().getString() + " is visiting you."), false);
 
-		return CommandUtils.success(source, "Visiting " + target.getName().getString() + ".");
+		return CommandUtils.successWithUndoCommand(source, "Visiting " + target.getName().getString() + ".", "/unvisit");
 	}
 }
