@@ -1,5 +1,9 @@
 # Dan's Minecraft Utils Mod
 
+A server-side Minecraft mod which adds a few custom commands, and prevents certain mobs griefing the world. Requires/powered by Fabric.
+
+⭐ Download the latest release [from here](https://github.com/dan-schel/mc-utils-mod/releases). ⭐
+
 ## Features
 
 - `/visit <username>` command to teleport to another player.
@@ -11,7 +15,9 @@
 - Prevent creepers, ghasts, and enderman destroying/placing blocks without disabling `mobGriefing` (which would also disable villagers being able to farm, etc.).
 - Disables the `/clear` command.
 
-## Getting set up (VSCode)
+## Development Guide
+
+### Getting set up (VSCode)
 
 To develop the mod, you'll need to install the [Extension Pack for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack), and then run:
 
@@ -27,7 +33,7 @@ chmod +x ./gradlew
 ./gradlew genSources
 ```
 
-## Exporting the compiled mod
+### Exporting the compiled mod
 
 Use the following command to compile the mod:
 
@@ -37,4 +43,4 @@ Use the following command to compile the mod:
 
 It saves to `/build/libs`.
 
-There is also a GitHub action which compiles the mod as an artifact, that you download it from there.
+There is also a GitHub action which automatically builds a release when merging to master. Be sure to bump the version in `gradle.properties` before merging.
