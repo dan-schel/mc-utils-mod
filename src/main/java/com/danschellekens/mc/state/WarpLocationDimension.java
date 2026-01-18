@@ -9,9 +9,12 @@ public enum WarpLocationDimension {
   THE_END("The End", World.END);
 
   private final String displayString;
-  private final RegistryKey<World> worldRegistryKey;  
+  private final RegistryKey<World> worldRegistryKey;
 
-  private WarpLocationDimension(String displayString, RegistryKey<World> worldRegistryKey) {
+  private WarpLocationDimension(
+    String displayString,
+    RegistryKey<World> worldRegistryKey
+  ) {
     this.displayString = displayString;
     this.worldRegistryKey = worldRegistryKey;
   }
@@ -24,12 +27,16 @@ public enum WarpLocationDimension {
     return this.worldRegistryKey;
   }
 
-  public static WarpLocationDimension fromWorldRegistryKey(RegistryKey<World> worldRegistryKey) {
+  public static WarpLocationDimension fromWorldRegistryKey(
+    RegistryKey<World> worldRegistryKey
+  ) {
     for (WarpLocationDimension d : WarpLocationDimension.values()) {
       if (d.getWorldRegistryKey() == worldRegistryKey) {
         return d;
       }
     }
-    throw new RuntimeException("Unknown world registry key: " + worldRegistryKey.toString());
+    throw new RuntimeException(
+      "Unknown world registry key: " + worldRegistryKey.toString()
+    );
   }
 }
