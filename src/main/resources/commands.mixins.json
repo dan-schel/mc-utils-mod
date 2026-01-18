@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "com.danschellekens.mc.commands.mixins",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": ["DisableClearCommandMixin"],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

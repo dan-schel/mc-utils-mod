@@ -14,7 +14,7 @@
   "entrypoints": {
     "main": ["com.danschellekens.mc.DansUtils"]
   },
-  "mixins": ["antigrief.mixins.json"],
+  "mixins": ["antigrief.mixins.json", "commands.mixins.json"],
   "accessWidener": "antigrief.accesswidener",
   "depends": {
     "fabricloader": ">=0.18.2",
