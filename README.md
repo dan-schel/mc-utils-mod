@@ -1,5 +1,9 @@
 # Dan's Minecraft Utils Mod
 
+A server-side Minecraft mod which adds a few custom commands, and prevents certain mobs griefing the world. Built using Fabric.
+
+🌐 Download the latest release [here](https://github.com/dan-schel/mc-utils-mod/releases).
+
 ## Features
 
 - `/visit <username>` command to teleport to another player.
