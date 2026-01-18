@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+# Exit with code 0 if current branch is master
+if git rev-parse --abbrev-ref HEAD | grep -q "^master$"; then
+  echo "✅ On master branch"
+  exit 0
+fi
+
 # Extract current version from gradle.properties
 current="v$(sed -n 's/^mod_version=//p' gradle.properties)"
 
