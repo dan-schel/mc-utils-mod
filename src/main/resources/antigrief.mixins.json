@@ -6,7 +6,8 @@
     "DefuseCreeperMixin",
     "DefuseGhastMixin",
     "PreventEndermanPickUpBlockMixin",
-    "PreventEndermanPlaceBlockMixin"
+    "PreventEndermanPlaceBlockMixin",
+    "LogTntEntitySpawnedMixin"
   ],
   "injectors": {
     "defaultRequire": 1
