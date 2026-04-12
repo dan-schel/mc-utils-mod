@@ -7,7 +7,8 @@
     "DefuseGhastMixin",
     "PreventEndermanPickUpBlockMixin",
     "PreventEndermanPlaceBlockMixin",
-    "LogTntEntitySpawnedMixin"
+    "LogTntEntitySpawnedMixin",
+    "LogTntObtainedMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -3,8 +3,11 @@ package com.danschellekens.mc.antigrief;
 import com.danschellekens.mc.utils.ChatUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.world.World;
 
 public class TntLogging {
 
@@ -44,5 +47,38 @@ public class TntLogging {
         entityTypeName + " spawned. " + nearbyPlayerNames + " nearby."
       )
     );
+  }
+
+  public static void onItemStackSet(PlayerEntity player, ItemStack stack) {
+    try {
+      World world = player.getEntityWorld();
+      if (world == null) {
+        return;
+      }
+
+      MinecraftServer server = world.getServer();
+      if (server == null) {
+        return;
+      }
+
+      if (
+        stack.getItem() != net.minecraft.item.Items.TNT ||
+        stack.getItem() == net.minecraft.item.Items.TNT_MINECART
+      ) {
+        return;
+      }
+
+      ChatUtils.logAndTellOps(
+        server,
+        ChatUtils.thirdPartyFormattedMessage(
+          "TNT Logging",
+          player.getName().getString() +
+            " is handling " +
+            stack.getName().getString()
+        )
+      );
+    } catch (Exception e) {
+      return;
+    }
   }
 }

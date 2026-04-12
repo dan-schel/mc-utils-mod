@@ -19,7 +19,7 @@ public class LogTntEntitySpawnedMixin {
   }
 
   @Inject(method = "spawnEntity", at = @At("HEAD"))
-  public void logOnTntSpawned(
+  public void logOnSpawnEntity(
     Entity entity,
     CallbackInfoReturnable<Boolean> info
   ) {
