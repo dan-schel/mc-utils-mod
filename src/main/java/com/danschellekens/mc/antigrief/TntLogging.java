@@ -1,6 +1,8 @@
 package com.danschellekens.mc.antigrief;
 
 import com.danschellekens.mc.utils.ChatUtils;
+import java.util.HashMap;
+import java.util.UUID;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -10,6 +12,12 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
 
 public class TntLogging {
+
+  private static final int SUSPICIOUS_RADIUS = 20;
+  private static final long TNT_LOG_COOLDOWN_MS = 60 * 60 * 1000; // 1 hour
+
+  private static final HashMap<UUID, Long> lastTntLogTimeByPlayer =
+    new HashMap<>();
 
   public static void onEntitySpawned(Entity entity, MinecraftServer server) {
     if (
@@ -24,7 +32,11 @@ public class TntLogging {
     for (ServerPlayerEntity player : server
       .getPlayerManager()
       .getPlayerList()) {
-      if (!player.getEntityPos().isInRange(entity.getEntityPos(), 20)) {
+      if (
+        !player
+          .getEntityPos()
+          .isInRange(entity.getEntityPos(), SUSPICIOUS_RADIUS)
+      ) {
         continue;
       }
 
@@ -62,11 +74,18 @@ public class TntLogging {
       }
 
       if (
-        stack.getItem() != net.minecraft.item.Items.TNT ||
-        stack.getItem() == net.minecraft.item.Items.TNT_MINECART
+        stack.getItem() != net.minecraft.item.Items.TNT &&
+        stack.getItem() != net.minecraft.item.Items.TNT_MINECART
       ) {
         return;
       }
+
+      long now = System.currentTimeMillis();
+      Long lastLogTime = lastTntLogTimeByPlayer.get(player.getUuid());
+      if (lastLogTime != null && (now - lastLogTime) < TNT_LOG_COOLDOWN_MS) {
+        return;
+      }
+      lastTntLogTimeByPlayer.put(player.getUuid(), now);
 
       ChatUtils.logAndTellOps(
         server,
