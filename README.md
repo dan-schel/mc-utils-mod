@@ -14,6 +14,7 @@ A server-side Minecraft mod which adds a few custom commands and prevents certai
 - Tracking players which haven't moved for >5 mins and inform other players on the server that they're AFK (plus manual `/afk` command).
 - Prevent creepers, ghasts, and enderman destroying/placing blocks without disabling `mobGriefing` (which would also disable villagers being able to farm, etc.).
 - Disables the `/clear` command.
+- Logs nearby players when TNT is ignited, and when TNT enters a player's inventory.
 
 ## Development Guide
 
