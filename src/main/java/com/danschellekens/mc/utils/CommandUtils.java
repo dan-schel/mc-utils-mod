@@ -55,6 +55,8 @@ public class CommandUtils {
       }
     }
 
+    source.getServer().sendMessage(thirdPartyMessage);
+
     return 1;
   }
 
@@ -89,8 +91,6 @@ public class CommandUtils {
     ServerCommandSource source,
     String message
   ) {
-    return Text.literal(
-      "[" + source.getName() + ": " + message + "]"
-    ).formatted(Formatting.GRAY, Formatting.ITALIC);
+    return ChatUtils.thirdPartyFormattedMessage(source.getName(), message);
   }
 }

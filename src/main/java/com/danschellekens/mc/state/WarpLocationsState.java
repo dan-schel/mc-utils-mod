@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 
 public class WarpLocationsState extends PersistentState {
 
-  public static final int MAX_WARP_LOCATIONS_PER_PLAYER = 5;
+  public static final int MAX_WARP_LOCATIONS_PER_PLAYER = 20;
 
   public enum AddResult {
     ADDED_NEW,
