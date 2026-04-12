@@ -55,6 +55,8 @@ public class CommandUtils {
       }
     }
 
+    source.getServer().sendMessage(thirdPartyMessage);
+
     return 1;
   }
 
