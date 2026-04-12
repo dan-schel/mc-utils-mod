@@ -43,7 +43,7 @@ public class TntLogging {
     ChatUtils.logAndTellOps(
       server,
       ChatUtils.thirdPartyFormattedMessage(
-        "TNT Logging",
+        "Server",
         entityTypeName + " spawned. " + nearbyPlayerNames + " nearby."
       )
     );
@@ -71,7 +71,7 @@ public class TntLogging {
       ChatUtils.logAndTellOps(
         server,
         ChatUtils.thirdPartyFormattedMessage(
-          "TNT Logging",
+          "Server",
           player.getName().getString() +
             " is handling " +
             stack.getName().getString()
