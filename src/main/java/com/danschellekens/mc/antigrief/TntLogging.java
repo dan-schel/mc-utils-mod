@@ -1,5 +1,6 @@
 package com.danschellekens.mc.antigrief;
 
+import com.danschellekens.mc.state.WarpLocationDimension;
 import com.danschellekens.mc.utils.ChatUtils;
 import java.util.HashMap;
 import java.util.UUID;
@@ -20,45 +21,64 @@ public class TntLogging {
     new HashMap<>();
 
   public static void onEntitySpawned(Entity entity, MinecraftServer server) {
-    if (
-      entity.getType() != EntityType.TNT &&
-      entity.getType() != EntityType.TNT_MINECART
-    ) {
+    try {
+      if (
+        entity.getType() != EntityType.TNT &&
+        entity.getType() != EntityType.TNT_MINECART
+      ) {
+        return;
+      }
+
+      String nearbyPlayerNames = "";
+
+      for (ServerPlayerEntity player : server
+        .getPlayerManager()
+        .getPlayerList()) {
+        if (
+          !player
+            .getEntityPos()
+            .isInRange(entity.getEntityPos(), SUSPICIOUS_RADIUS)
+        ) {
+          continue;
+        }
+
+        if (!nearbyPlayerNames.isEmpty()) {
+          nearbyPlayerNames += ", ";
+        }
+        nearbyPlayerNames += player.getName().getString();
+      }
+
+      if (nearbyPlayerNames.isEmpty()) {
+        nearbyPlayerNames = "No-one";
+      }
+
+      String entityTypeName = entity.getType().getName().getString();
+      String entityLocation =
+        entity.getBlockX() +
+        ", " +
+        entity.getBlockY() +
+        ", " +
+        entity.getBlockZ() +
+        " in " +
+        WarpLocationDimension.fromWorldRegistryKey(
+          entity.getEntityWorld().getRegistryKey()
+        ).getDisplayString();
+
+      ChatUtils.logAndTellOps(
+        server,
+        ChatUtils.thirdPartyFormattedMessage(
+          "Server",
+          entityTypeName +
+            " spawned at " +
+            entityLocation +
+            ". " +
+            nearbyPlayerNames +
+            " nearby."
+        )
+      );
+    } catch (Exception e) {
       return;
     }
-
-    String nearbyPlayerNames = "";
-
-    for (ServerPlayerEntity player : server
-      .getPlayerManager()
-      .getPlayerList()) {
-      if (
-        !player
-          .getEntityPos()
-          .isInRange(entity.getEntityPos(), SUSPICIOUS_RADIUS)
-      ) {
-        continue;
-      }
-
-      if (!nearbyPlayerNames.isEmpty()) {
-        nearbyPlayerNames += ", ";
-      }
-      nearbyPlayerNames += player.getName().getString();
-    }
-
-    if (nearbyPlayerNames.isEmpty()) {
-      nearbyPlayerNames = "No-one";
-    }
-
-    String entityTypeName = entity.getType().getName().getString();
-
-    ChatUtils.logAndTellOps(
-      server,
-      ChatUtils.thirdPartyFormattedMessage(
-        "Server",
-        entityTypeName + " spawned. " + nearbyPlayerNames + " nearby."
-      )
-    );
   }
 
   public static void onItemStackSet(PlayerEntity player, ItemStack stack) {
@@ -80,6 +100,7 @@ public class TntLogging {
         return;
       }
 
+      // Skip logging if we've already logged for this player in the last hour.
       long now = System.currentTimeMillis();
       Long lastLogTime = lastTntLogTimeByPlayer.get(player.getUuid());
       if (lastLogTime != null && (now - lastLogTime) < TNT_LOG_COOLDOWN_MS) {
