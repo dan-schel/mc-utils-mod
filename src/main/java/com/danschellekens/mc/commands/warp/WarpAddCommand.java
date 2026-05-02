@@ -9,43 +9,43 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.command.DefaultPermissions;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 
 public class WarpAddCommand {
 
-  public static LiteralArgumentBuilder<ServerCommandSource> COMMAND =
-    CommandManager.literal("add").then(
-      CommandManager.argument("name", StringArgumentType.word())
+  public static LiteralArgumentBuilder<CommandSourceStack> COMMAND =
+    Commands.literal("add").then(
+      Commands.argument("name", StringArgumentType.word())
         .then(
-          CommandManager.argument("global", BoolArgumentType.bool())
+          Commands.argument("global", BoolArgumentType.bool())
             .requires(
-              CommandManager.requirePermissionLevel(CommandManager.OWNERS_CHECK)
+              Commands.hasPermission(Commands.LEVEL_OWNERS)
             )
             .executes(WarpAddCommand::withGlobalArg)
         )
         .executes(WarpAddCommand::withoutGlobalArg)
     );
 
-  private static int withGlobalArg(CommandContext<ServerCommandSource> context)
+  private static int withGlobalArg(CommandContext<CommandSourceStack> context)
     throws CommandSyntaxException {
     return WarpAddCommand.execute(context, true);
   }
 
   private static int withoutGlobalArg(
-    CommandContext<ServerCommandSource> context
+    CommandContext<CommandSourceStack> context
   ) throws CommandSyntaxException {
     return WarpAddCommand.execute(context, false);
   }
 
   private static int execute(
-    CommandContext<ServerCommandSource> context,
+    CommandContext<CommandSourceStack> context,
     boolean hasGlobalArgument
   ) throws CommandSyntaxException {
-    ServerCommandSource source = context.getSource();
-    ServerPlayerEntity player = source.getPlayer();
+    CommandSourceStack source = context.getSource();
+    ServerPlayer player = source.getPlayer();
 
     if (player == null) {
       return CommandUtils.failure(source, "Not executed by a player.");
@@ -62,18 +62,18 @@ public class WarpAddCommand {
     }
 
     WarpLocation location = WarpLocation.fromWorld(
-      player.getBlockPos(),
-      source.getWorld()
+      player.blockPosition(),
+      source.getLevel()
     );
     WarpLocationsState locations = WarpLocationsState.getServerState(
       source.getServer()
     );
     boolean isPlayerOp = player
-      .getPermissions()
-      .hasPermission(DefaultPermissions.OWNERS);
+      .permissions()
+      .hasPermission(Permissions.COMMANDS_OWNER);
 
     AddResult result = locations.add(
-      player.getUuid(),
+      player.getUUID(),
       name,
       location,
       global,

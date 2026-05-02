@@ -1,29 +1,29 @@
 package com.danschellekens.mc.utils;
 
-import net.minecraft.command.DefaultPermissions;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 
 public class ChatUtils {
 
-  public static void logAndTellOps(MinecraftServer server, Text message) {
-    for (ServerPlayerEntity player : server
-      .getPlayerManager()
-      .getPlayerList()) {
-      if (player.getPermissions().hasPermission(DefaultPermissions.OWNERS)) {
-        player.sendMessageToClient(message, false);
+  public static void logAndTellOps(MinecraftServer server, Component message) {
+    for (ServerPlayer player : server
+      .getPlayerList()
+      .getPlayers()) {
+      if (player.permissions().hasPermission(Permissions.COMMANDS_OWNER)) {
+        player.sendSystemMessage(message, false);
       }
     }
 
-    server.sendMessage(message);
+    server.sendSystemMessage(message);
   }
 
-  public static Text thirdPartyFormattedMessage(String source, String message) {
-    return Text.literal("[" + source + ": " + message + "]").formatted(
-      Formatting.GRAY,
-      Formatting.ITALIC
+  public static Component thirdPartyFormattedMessage(String source, String message) {
+    return Component.literal("[" + source + ": " + message + "]").withStyle(
+      ChatFormatting.GRAY,
+      ChatFormatting.ITALIC
     );
   }
 }

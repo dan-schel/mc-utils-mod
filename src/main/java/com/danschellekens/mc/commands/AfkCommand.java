@@ -5,19 +5,19 @@ import com.danschellekens.mc.utils.CommandUtils;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.server.level.ServerPlayer;
 
 public class AfkCommand {
 
-  public static LiteralArgumentBuilder<ServerCommandSource> COMMAND =
-    CommandManager.literal("afk").executes(AfkCommand::execute);
+  public static LiteralArgumentBuilder<CommandSourceStack> COMMAND =
+    Commands.literal("afk").executes(AfkCommand::execute);
 
-  public static int execute(CommandContext<ServerCommandSource> context)
+  public static int execute(CommandContext<CommandSourceStack> context)
     throws CommandSyntaxException {
-    ServerCommandSource source = context.getSource();
-    ServerPlayerEntity player = source.getPlayer();
+    CommandSourceStack source = context.getSource();
+    ServerPlayer player = source.getPlayer();
 
     if (player == null) {
       return CommandUtils.failure(source, "Not executed by a player.");

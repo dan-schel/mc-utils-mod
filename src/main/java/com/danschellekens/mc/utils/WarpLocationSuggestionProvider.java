@@ -7,12 +7,12 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import java.util.concurrent.CompletableFuture;
-import net.minecraft.command.DefaultPermissions;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 
 public class WarpLocationSuggestionProvider
-  implements SuggestionProvider<ServerCommandSource>
+  implements SuggestionProvider<CommandSourceStack>
 {
 
   boolean hideGlobalWarpsUnlessOp;
@@ -23,26 +23,26 @@ public class WarpLocationSuggestionProvider
 
   @Override
   public CompletableFuture<Suggestions> getSuggestions(
-    CommandContext<ServerCommandSource> context,
+    CommandContext<CommandSourceStack> context,
     SuggestionsBuilder builder
   ) throws CommandSyntaxException {
-    ServerCommandSource source = context.getSource();
+    CommandSourceStack source = context.getSource();
     WarpLocationsState warpLocations = WarpLocationsState.getServerState(
       source.getServer()
     );
 
-    ServerPlayerEntity currentPlayer = source.getPlayer();
+    ServerPlayer currentPlayer = source.getPlayer();
     if (currentPlayer == null) {
       return builder.buildFuture();
     }
 
     boolean isPlayerOp = currentPlayer
-      .getPermissions()
-      .hasPermission(DefaultPermissions.OWNERS);
+      .permissions()
+      .hasPermission(Permissions.COMMANDS_OWNER);
     boolean includeGlobal = isPlayerOp || !this.hideGlobalWarpsUnlessOp;
 
     for (String warpName : warpLocations.getPossibleWarps(
-      currentPlayer.getUuid(),
+      currentPlayer.getUUID(),
       includeGlobal
     )) {
       builder.suggest(warpName);

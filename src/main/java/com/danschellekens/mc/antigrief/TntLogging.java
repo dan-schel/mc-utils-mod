@@ -4,13 +4,13 @@ import com.danschellekens.mc.state.WarpLocationDimension;
 import com.danschellekens.mc.utils.ChatUtils;
 import java.util.HashMap;
 import java.util.UUID;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 public class TntLogging {
 
@@ -31,13 +31,13 @@ public class TntLogging {
 
       String nearbyPlayerNames = "";
 
-      for (ServerPlayerEntity player : server
-        .getPlayerManager()
-        .getPlayerList()) {
+      for (ServerPlayer player : server
+        .getPlayerList()
+        .getPlayers()) {
         if (
           !player
-            .getEntityPos()
-            .isInRange(entity.getEntityPos(), SUSPICIOUS_RADIUS)
+            .position()
+            .closerThan(entity.position(), SUSPICIOUS_RADIUS)
         ) {
           continue;
         }
@@ -52,7 +52,7 @@ public class TntLogging {
         nearbyPlayerNames = "No-one";
       }
 
-      String entityTypeName = entity.getType().getName().getString();
+      String entityTypeName = entity.getType().getDescription().getString();
       String entityLocation =
         entity.getBlockX() +
         ", " +
@@ -61,7 +61,7 @@ public class TntLogging {
         entity.getBlockZ() +
         " in " +
         WarpLocationDimension.fromWorldRegistryKey(
-          entity.getEntityWorld().getRegistryKey()
+          entity.level().dimension()
         ).getDisplayString();
 
       ChatUtils.logAndTellOps(
@@ -81,9 +81,9 @@ public class TntLogging {
     }
   }
 
-  public static void onItemStackSet(PlayerEntity player, ItemStack stack) {
+  public static void onItemStackSet(Player player, ItemStack stack) {
     try {
-      World world = player.getEntityWorld();
+      Level world = player.level();
       if (world == null) {
         return;
       }
@@ -94,19 +94,19 @@ public class TntLogging {
       }
 
       if (
-        stack.getItem() != net.minecraft.item.Items.TNT &&
-        stack.getItem() != net.minecraft.item.Items.TNT_MINECART
+        stack.getItem() != net.minecraft.world.item.Items.TNT &&
+        stack.getItem() != net.minecraft.world.item.Items.TNT_MINECART
       ) {
         return;
       }
 
       // Skip logging if we've already logged for this player in the last hour.
       long now = System.currentTimeMillis();
-      Long lastLogTime = lastTntLogTimeByPlayer.get(player.getUuid());
+      Long lastLogTime = lastTntLogTimeByPlayer.get(player.getUUID());
       if (lastLogTime != null && (now - lastLogTime) < TNT_LOG_COOLDOWN_MS) {
         return;
       }
-      lastTntLogTimeByPlayer.put(player.getUuid(), now);
+      lastTntLogTimeByPlayer.put(player.getUUID(), now);
 
       ChatUtils.logAndTellOps(
         server,
@@ -114,7 +114,7 @@ public class TntLogging {
           "Server",
           player.getName().getString() +
             " is handling " +
-            stack.getName().getString()
+            stack.getHoverName().getString()
         )
       );
     } catch (Exception e) {

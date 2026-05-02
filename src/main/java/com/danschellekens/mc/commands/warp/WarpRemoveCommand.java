@@ -8,24 +8,24 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.command.DefaultPermissions;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 
 public class WarpRemoveCommand {
 
-  public static LiteralArgumentBuilder<ServerCommandSource> COMMAND =
-    CommandManager.literal("remove").then(
-      CommandManager.argument("name", StringArgumentType.word())
+  public static LiteralArgumentBuilder<CommandSourceStack> COMMAND =
+    Commands.literal("remove").then(
+      Commands.argument("name", StringArgumentType.word())
         .suggests(new WarpLocationSuggestionProvider(true))
         .executes(WarpRemoveCommand::execute)
     );
 
-  private static int execute(CommandContext<ServerCommandSource> context)
+  private static int execute(CommandContext<CommandSourceStack> context)
     throws CommandSyntaxException {
-    ServerCommandSource source = context.getSource();
-    ServerPlayerEntity player = source.getPlayer();
+    CommandSourceStack source = context.getSource();
+    ServerPlayer player = source.getPlayer();
 
     if (player == null) {
       return CommandUtils.failure(source, "Not executed by a player.");
@@ -33,13 +33,13 @@ public class WarpRemoveCommand {
 
     String name = StringArgumentType.getString(context, "name");
     boolean isPlayerOp = player
-      .getPermissions()
-      .hasPermission(DefaultPermissions.OWNERS);
+      .permissions()
+      .hasPermission(Permissions.COMMANDS_OWNER);
     WarpLocationsState locations = WarpLocationsState.getServerState(
       source.getServer()
     );
 
-    RemoveResult result = locations.remove(player.getUuid(), name, isPlayerOp);
+    RemoveResult result = locations.remove(player.getUUID(), name, isPlayerOp);
 
     switch (result) {
       case REMOVED_GLOBAL:

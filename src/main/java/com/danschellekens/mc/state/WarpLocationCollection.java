@@ -1,7 +1,7 @@
 package com.danschellekens.mc.state;
 
 import java.util.HashMap;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
 
 public class WarpLocationCollection {
 
@@ -35,17 +35,17 @@ public class WarpLocationCollection {
     return this.locations.size();
   }
 
-  public NbtCompound toNbt() {
-    NbtCompound nbt = new NbtCompound();
+  public CompoundTag toNbt() {
+    CompoundTag nbt = new CompoundTag();
     for (String name : this.locations.keySet()) {
       nbt.put(name, this.locations.get(name).toNbt());
     }
     return nbt;
   }
 
-  public static WarpLocationCollection fromNbt(NbtCompound nbt) {
+  public static WarpLocationCollection fromNbt(CompoundTag nbt) {
     HashMap<String, WarpLocation> locations = new HashMap<>();
-    for (String name : nbt.getKeys()) {
+    for (String name : nbt.keySet()) {
       locations.put(
         name,
         WarpLocation.fromNbt(nbt.getCompound(name).orElseThrow())

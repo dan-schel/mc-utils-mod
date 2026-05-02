@@ -1,9 +1,9 @@
 package com.danschellekens.mc.antigrief.mixins;
 
 import com.danschellekens.mc.antigrief.TntLogging;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -11,15 +11,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(PlayerInventory.class)
+@Mixin(Inventory.class)
 public class LogTntObtainedMixin {
 
   @Shadow
-  public PlayerEntity player;
+  public Player player;
 
   @Inject(
     // Specifically want to target the method with (int, ItemStack) signature.
-    method = "addStack(ILnet/minecraft/item/ItemStack;)I",
+    method = "addResource(ILnet/minecraft/world/item/ItemStack;)I",
     at = @At("HEAD")
   )
   private void logOnAddStack(
@@ -30,7 +30,7 @@ public class LogTntObtainedMixin {
     TntLogging.onItemStackSet(player, stack);
   }
 
-  @Inject(method = "setStack", at = @At("HEAD"))
+  @Inject(method = "setItem", at = @At("HEAD"))
   public void logOnInsertStack(int slot, ItemStack stack, CallbackInfo info) {
     TntLogging.onItemStackSet(player, stack);
   }

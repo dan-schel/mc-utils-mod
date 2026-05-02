@@ -1,14 +1,14 @@
 package com.danschellekens.mc.antigrief.mixins;
 
-import net.minecraft.entity.mob.EndermanEntity;
+import net.minecraft.world.entity.monster.EnderMan;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-@Mixin(EndermanEntity.PlaceBlockGoal.class)
+@Mixin(EnderMan.EndermanLeaveBlockGoal.class)
 public class PreventEndermanPlaceBlockMixin {
 
   @Overwrite
-  public boolean canStart() {
+  public boolean canUse() {
     return false;
   }
 }
