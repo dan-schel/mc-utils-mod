@@ -1,19 +1,19 @@
 package com.danschellekens.mc.state;
 
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 
 public enum WarpLocationDimension {
-  THE_OVERWORLD("The Overworld", World.OVERWORLD),
-  THE_NETHER("The Nether", World.NETHER),
-  THE_END("The End", World.END);
+  THE_OVERWORLD("The Overworld", Level.OVERWORLD),
+  THE_NETHER("The Nether", Level.NETHER),
+  THE_END("The End", Level.END);
 
   private final String displayString;
-  private final RegistryKey<World> worldRegistryKey;
+  private final ResourceKey<Level> worldRegistryKey;
 
   private WarpLocationDimension(
     String displayString,
-    RegistryKey<World> worldRegistryKey
+    ResourceKey<Level> worldRegistryKey
   ) {
     this.displayString = displayString;
     this.worldRegistryKey = worldRegistryKey;
@@ -23,12 +23,12 @@ public enum WarpLocationDimension {
     return this.displayString;
   }
 
-  public RegistryKey<World> getWorldRegistryKey() {
+  public ResourceKey<Level> getWorldRegistryKey() {
     return this.worldRegistryKey;
   }
 
   public static WarpLocationDimension fromWorldRegistryKey(
-    RegistryKey<World> worldRegistryKey
+    ResourceKey<Level> worldRegistryKey
   ) {
     for (WarpLocationDimension d : WarpLocationDimension.values()) {
       if (d.getWorldRegistryKey() == worldRegistryKey) {

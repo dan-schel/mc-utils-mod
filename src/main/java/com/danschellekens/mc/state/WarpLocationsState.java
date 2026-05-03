@@ -6,13 +6,13 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.PersistentState;
-import net.minecraft.world.PersistentStateType;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 
-public class WarpLocationsState extends PersistentState {
+public class WarpLocationsState extends SavedData {
 
   public static final int MAX_WARP_LOCATIONS_PER_PLAYER = 20;
 
@@ -68,7 +68,7 @@ public class WarpLocationsState extends PersistentState {
         for (WarpLocationCollection collection : this.playerSpecific.values()) {
           collection.remove(name);
         }
-        this.markDirty();
+        this.setDirty();
 
         return alreadyExisted
           ? AddResult.UPDATED_EXISTING
@@ -96,7 +96,7 @@ public class WarpLocationsState extends PersistentState {
       }
 
       collection.add(name, location);
-      this.markDirty();
+      this.setDirty();
 
       return alreadyExisted ? AddResult.UPDATED_EXISTING : AddResult.ADDED_NEW;
     }
@@ -106,7 +106,7 @@ public class WarpLocationsState extends PersistentState {
     if (this.global.contains(name)) {
       if (isPlayerOp) {
         this.global.remove(name);
-        this.markDirty();
+        this.setDirty();
         return RemoveResult.REMOVED_GLOBAL;
       } else {
         return RemoveResult.REQUIRES_OP;
@@ -116,7 +116,7 @@ public class WarpLocationsState extends PersistentState {
     WarpLocationCollection collection = this.playerSpecific.get(playerUUID);
     if (collection != null && collection.contains(name)) {
       collection.remove(name);
-      this.markDirty();
+      this.setDirty();
       return RemoveResult.REMOVED_PLAYER_SPECIFIC;
     }
 
@@ -160,7 +160,7 @@ public class WarpLocationsState extends PersistentState {
 
   public void savePriorLocation(UUID playerUUID, WarpLocation location) {
     this.playerPriorLocations.put(playerUUID, location);
-    this.markDirty();
+    this.setDirty();
   }
 
   public Optional<WarpLocation> getPriorLocation(UUID playerUUID) {
@@ -169,14 +169,14 @@ public class WarpLocationsState extends PersistentState {
 
   public void deletePriorLocation(UUID playerUUID) {
     this.playerPriorLocations.remove(playerUUID);
-    this.markDirty();
+    this.setDirty();
   }
 
-  public NbtCompound writeNbt() {
-    NbtCompound nbt = new NbtCompound();
+  public CompoundTag writeNbt() {
+    CompoundTag nbt = new CompoundTag();
     nbt.put("Global", this.global.toNbt());
 
-    NbtCompound playerSpecificNbt = new NbtCompound();
+    CompoundTag playerSpecificNbt = new CompoundTag();
     for (Entry<
       UUID,
       WarpLocationCollection
@@ -188,7 +188,7 @@ public class WarpLocationsState extends PersistentState {
     }
     nbt.put("PlayerSpecific", playerSpecificNbt);
 
-    NbtCompound playerPriorLocationsNbt = new NbtCompound();
+    CompoundTag playerPriorLocationsNbt = new CompoundTag();
     for (Entry<
       UUID,
       WarpLocation
@@ -203,16 +203,16 @@ public class WarpLocationsState extends PersistentState {
     return nbt;
   }
 
-  public static WarpLocationsState fromNbt(NbtCompound nbt) {
+  public static WarpLocationsState fromNbt(CompoundTag nbt) {
     WarpLocationCollection global = WarpLocationCollection.fromNbt(
       nbt.getCompound("Global").orElseThrow()
     );
 
     HashMap<UUID, WarpLocationCollection> playerSpecific = new HashMap<>();
-    NbtCompound playerSpecificNbt = nbt
+    CompoundTag playerSpecificNbt = nbt
       .getCompound("PlayerSpecific")
       .orElseThrow();
-    for (String key : playerSpecificNbt.getKeys()) {
+    for (String key : playerSpecificNbt.keySet()) {
       playerSpecific.put(
         UUID.fromString(key),
         WarpLocationCollection.fromNbt(
@@ -222,10 +222,10 @@ public class WarpLocationsState extends PersistentState {
     }
 
     HashMap<UUID, WarpLocation> playerPriorLocations = new HashMap<>();
-    NbtCompound playerPriorLocationsNbt = nbt
+    CompoundTag playerPriorLocationsNbt = nbt
       .getCompound("PlayerPriorLocations")
-      .orElse(new NbtCompound());
-    for (String key : playerPriorLocationsNbt.getKeys()) {
+      .orElse(new CompoundTag());
+    for (String key : playerPriorLocationsNbt.keySet()) {
       playerPriorLocations.put(
         UUID.fromString(key),
         WarpLocation.fromNbt(
@@ -237,11 +237,11 @@ public class WarpLocationsState extends PersistentState {
     return new WarpLocationsState(global, playerSpecific, playerPriorLocations);
   }
 
-  public static final PersistentStateType<WarpLocationsState> TYPE =
-    new PersistentStateType<WarpLocationsState>(
+  public static final SavedDataType<WarpLocationsState> TYPE =
+    new SavedDataType<WarpLocationsState>(
       DansUtils.MOD_ID + "_warp_locations",
       WarpLocationsState::new,
-      NbtCompound.CODEC.xmap(
+      CompoundTag.CODEC.xmap(
         WarpLocationsState::fromNbt,
         WarpLocationsState::writeNbt
       ),
@@ -251,8 +251,8 @@ public class WarpLocationsState extends PersistentState {
   @SuppressWarnings("null")
   public static WarpLocationsState getServerState(MinecraftServer server) {
     return server
-      .getWorld(World.OVERWORLD)
-      .getPersistentStateManager()
-      .getOrCreate(TYPE);
+      .getLevel(Level.OVERWORLD)
+      .getDataStorage()
+      .computeIfAbsent(TYPE);
   }
 }

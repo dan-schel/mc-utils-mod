@@ -1,83 +1,83 @@
 package com.danschellekens.mc.utils;
 
-import net.minecraft.command.DefaultPermissions;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 
 public class CommandUtils {
 
-  public static int success(ServerCommandSource source, String message) {
-    return success(source, Text.literal(message));
+  public static int success(CommandSourceStack source, String message) {
+    return success(source, Component.literal(message));
   }
 
-  public static int success(ServerCommandSource source, Text message) {
-    source.sendFeedback(() -> message, true);
+  public static int success(CommandSourceStack source, Component message) {
+    source.sendSuccess(() -> message, true);
     return 1;
   }
 
   public static int success(
-    ServerCommandSource source,
+    CommandSourceStack source,
     String message,
     boolean tellEveryone
   ) {
     return success(
       source,
-      Text.literal(message),
+      Component.literal(message),
       thirdPartyFormattedMessage(source, message),
       tellEveryone
     );
   }
 
   public static int success(
-    ServerCommandSource source,
-    Text personalMessage,
-    Text thirdPartyMessage,
+    CommandSourceStack source,
+    Component personalMessage,
+    Component thirdPartyMessage,
     boolean tellEveryone
   ) {
-    ServerPlayerEntity player = source.getPlayer();
+    ServerPlayer player = source.getPlayer();
 
-    source.sendFeedback(() -> personalMessage, false);
+    source.sendSuccess(() -> personalMessage, false);
 
-    for (ServerPlayerEntity otherPlayer : source
+    for (ServerPlayer otherPlayer : source
       .getServer()
-      .getPlayerManager()
-      .getPlayerList()) {
+      .getPlayerList()
+      .getPlayers()) {
       if (player != null && otherPlayer.getId() == player.getId()) {
         continue;
       }
       if (
         tellEveryone ||
-        otherPlayer.getPermissions().hasPermission(DefaultPermissions.OWNERS)
+        otherPlayer.permissions().hasPermission(Permissions.COMMANDS_OWNER)
       ) {
-        otherPlayer.sendMessageToClient(thirdPartyMessage, false);
+        otherPlayer.sendSystemMessage(thirdPartyMessage, false);
       }
     }
 
-    source.getServer().sendMessage(thirdPartyMessage);
+    source.getServer().sendSystemMessage(thirdPartyMessage);
 
     return 1;
   }
 
-  public static int failure(ServerCommandSource source, String message) {
-    source.sendFeedback(() -> Text.literal(message), false);
+  public static int failure(CommandSourceStack source, String message) {
+    source.sendSuccess(() -> Component.literal(message), false);
     return 0;
   }
 
-  public static int failure(ServerCommandSource source, Text message) {
-    source.sendFeedback(() -> message, false);
+  public static int failure(CommandSourceStack source, Component message) {
+    source.sendSuccess(() -> message, false);
     return 0;
   }
 
   public static int successWithUndoCommand(
-    ServerCommandSource source,
+    CommandSourceStack source,
     String message,
     String undoCommand
   ) {
-    Text personalMessage = Text.literal(message + " (Undo with ")
-      .append(Text.literal(undoCommand).formatted(Formatting.AQUA))
-      .append(Text.literal(".)"));
+    Component personalMessage = Component.literal(message + " (Undo with ")
+      .append(Component.literal(undoCommand).withStyle(ChatFormatting.AQUA))
+      .append(Component.literal(".)"));
 
     return CommandUtils.success(
       source,
@@ -87,10 +87,10 @@ public class CommandUtils {
     );
   }
 
-  private static Text thirdPartyFormattedMessage(
-    ServerCommandSource source,
+  private static Component thirdPartyFormattedMessage(
+    CommandSourceStack source,
     String message
   ) {
-    return ChatUtils.thirdPartyFormattedMessage(source.getName(), message);
+    return ChatUtils.thirdPartyFormattedMessage(source.getTextName(), message);
   }
 }

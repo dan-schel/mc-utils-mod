@@ -7,11 +7,11 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.level.ServerPlayer;
 
 public class PlayerSuggestionProvider
-  implements SuggestionProvider<ServerCommandSource>
+  implements SuggestionProvider<CommandSourceStack>
 {
 
   private boolean includeSelf;
@@ -22,13 +22,13 @@ public class PlayerSuggestionProvider
 
   @Override
   public CompletableFuture<Suggestions> getSuggestions(
-    CommandContext<ServerCommandSource> context,
+    CommandContext<CommandSourceStack> context,
     SuggestionsBuilder builder
   ) throws CommandSyntaxException {
-    ServerCommandSource source = context.getSource();
-    Collection<String> playerNames = source.getPlayerNames();
+    CommandSourceStack source = context.getSource();
+    Collection<String> playerNames = source.getOnlinePlayerNames();
 
-    ServerPlayerEntity currentPlayer = source.getPlayer();
+    ServerPlayer currentPlayer = source.getPlayer();
 
     for (String playerName : playerNames) {
       if (

@@ -1,8 +1,8 @@
 package com.danschellekens.mc.state;
 
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.Level;
 
 public class WarpLocation {
 
@@ -34,8 +34,8 @@ public class WarpLocation {
     );
   }
 
-  public NbtCompound toNbt() {
-    NbtCompound nbt = new NbtCompound();
+  public CompoundTag toNbt() {
+    CompoundTag nbt = new CompoundTag();
     nbt.putInt("X", this.position.getX());
     nbt.putInt("Y", this.position.getY());
     nbt.putInt("Z", this.position.getZ());
@@ -43,7 +43,7 @@ public class WarpLocation {
     return nbt;
   }
 
-  public static WarpLocation fromNbt(NbtCompound nbt) {
+  public static WarpLocation fromNbt(CompoundTag nbt) {
     BlockPos position = new BlockPos(
       nbt.getInt("X").orElseThrow(),
       nbt.getInt("Y").orElseThrow(),
@@ -55,10 +55,10 @@ public class WarpLocation {
     return new WarpLocation(position, dimension);
   }
 
-  public static WarpLocation fromWorld(BlockPos position, World world) {
+  public static WarpLocation fromWorld(BlockPos position, Level world) {
     return new WarpLocation(
       position,
-      WarpLocationDimension.fromWorldRegistryKey(world.getRegistryKey())
+      WarpLocationDimension.fromWorldRegistryKey(world.dimension())
     );
   }
 }

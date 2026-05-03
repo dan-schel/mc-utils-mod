@@ -4,27 +4,27 @@ import com.danschellekens.mc.utils.CommandUtils;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.server.level.ServerLevel;
 
 public class DaytimeCommand {
 
-  public static LiteralArgumentBuilder<ServerCommandSource> COMMAND =
-    CommandManager.literal("daytime").executes(DaytimeCommand::execute);
+  public static LiteralArgumentBuilder<CommandSourceStack> COMMAND =
+    Commands.literal("daytime").executes(DaytimeCommand::execute);
 
-  public static int execute(CommandContext<ServerCommandSource> context)
+  public static int execute(CommandContext<CommandSourceStack> context)
     throws CommandSyntaxException {
-    ServerCommandSource source = context.getSource();
-    ServerWorld world = source.getWorld();
+    CommandSourceStack source = context.getSource();
+    ServerLevel world = source.getLevel();
 
-    long currentTime = world.getTimeOfDay() % 24000;
+    long currentTime = world.getDayTime() % 24000;
 
     if (currentTime < 10000) {
       return CommandUtils.failure(source, "It isn't night time.");
     }
 
-    world.setTimeOfDay(0);
+    world.setDayTime(0);
 
     return CommandUtils.success(source, "Skipped to daytime.", true);
   }

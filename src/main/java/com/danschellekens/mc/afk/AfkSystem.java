@@ -5,11 +5,11 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
-import net.minecraft.scoreboard.Team;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.scores.PlayerTeam;
 
 public class AfkSystem {
 
@@ -31,14 +31,12 @@ public class AfkSystem {
 
   public void onTick(MinecraftServer server) {
     // Run every 10 ticks (0.5 seconds).
-    if (server.getTicks() % 10 != 0) {
+    if (server.getTickCount() % 10 != 0) {
       return;
     }
 
-    for (ServerPlayerEntity player : server
-      .getPlayerManager()
-      .getPlayerList()) {
-      if (!players.containsKey(player.getUuid())) {
+    for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+      if (!players.containsKey(player.getUUID())) {
         onNewPlayer(player);
       } else {
         updatePlayerStatus(player);
@@ -47,7 +45,7 @@ public class AfkSystem {
 
     ArrayList<UUID> playersNoLongerOnline = new ArrayList<>();
     for (UUID playerId : players.keySet()) {
-      if (server.getPlayerManager().getPlayer(playerId) == null) {
+      if (server.getPlayerList().getPlayer(playerId) == null) {
         playersNoLongerOnline.add(playerId);
       }
     }
@@ -57,30 +55,30 @@ public class AfkSystem {
     }
   }
 
-  public void manuallyDeclareAfk(ServerPlayerEntity player) {
+  public void manuallyDeclareAfk(ServerPlayer player) {
     PlayerStatus status = getOrCreateStatus(player);
     status.setDeclaredAfk(true, true);
     onPlayerBecomesAfk(player);
   }
 
-  private PlayerStatus getOrCreateStatus(ServerPlayerEntity player) {
-    PlayerStatus status = players.get(player.getUuid());
+  private PlayerStatus getOrCreateStatus(ServerPlayer player) {
+    PlayerStatus status = players.get(player.getUUID());
     if (status == null) {
       status = new PlayerStatus(
         false,
-        player.getYaw(),
-        player.getPitch(),
+        player.getYRot(),
+        player.getXRot(),
         Instant.now(),
-        player.getNameForScoreboard()
+        player.getScoreboardName()
       );
-      players.put(player.getUuid(), status);
+      players.put(player.getUUID(), status);
     }
     return status;
   }
 
-  private void updatePlayerStatus(ServerPlayerEntity player) {
-    double currentYaw = player.getYaw();
-    double currentPitch = player.getPitch();
+  private void updatePlayerStatus(ServerPlayer player) {
+    double currentYaw = player.getYRot();
+    double currentPitch = player.getXRot();
 
     PlayerStatus status = getOrCreateStatus(player);
     status.update(currentYaw, currentPitch);
@@ -96,18 +94,15 @@ public class AfkSystem {
     }
   }
 
-  private void onNewPlayer(ServerPlayerEntity player) {
+  private void onNewPlayer(ServerPlayer player) {
     getOrCreateStatus(player);
-    removeFromAfkTeam(
-      player.getEntityWorld().getServer(),
-      player.getNameForScoreboard()
-    );
+    removeFromAfkTeam(player.level().getServer(), player.getScoreboardName());
 
     int afkPlayers = getAfkPlayerCount();
     if (afkPlayers >= 1) {
       String quantityText =
         afkPlayers + (afkPlayers == 1 ? " player is" : " players are");
-      player.sendMessageToClient(
+      player.sendSystemMessage(
         createBlueCenterText(
           "Welcome! " + quantityText + " currently ",
           "AFK",
@@ -118,60 +113,60 @@ public class AfkSystem {
     }
   }
 
-  private void onPlayerBecomesAfk(ServerPlayerEntity afkPlayer) {
-    MinecraftServer server = afkPlayer.getEntityWorld().getServer();
+  private void onPlayerBecomesAfk(ServerPlayer afkPlayer) {
+    MinecraftServer server = afkPlayer.level().getServer();
 
-    Text firstPerson = createBlueCenterText("You're marked as ", "AFK", ".");
-    Text thirdPerson = createBlueCenterText(
+    Component firstPerson = createBlueCenterText(
+      "You're marked as ",
+      "AFK",
+      "."
+    );
+    Component thirdPerson = createBlueCenterText(
       afkPlayer.getName().getString() + " is ",
       "AFK",
       "."
     );
 
-    for (ServerPlayerEntity player : server
-      .getPlayerManager()
-      .getPlayerList()) {
-      player.sendMessageToClient(
-        player.getUuid().equals(afkPlayer.getUuid())
+    for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+      player.sendSystemMessage(
+        player.getUUID().equals(afkPlayer.getUUID())
           ? firstPerson
           : thirdPerson,
         false
       );
     }
 
-    server.sendMessage(thirdPerson);
+    server.sendSystemMessage(thirdPerson);
 
-    addToAfkTeam(server, afkPlayer.getNameForScoreboard());
+    addToAfkTeam(server, afkPlayer.getScoreboardName());
   }
 
-  private void onPlayerBecomesActive(ServerPlayerEntity activePlayer) {
-    MinecraftServer server = activePlayer.getEntityWorld().getServer();
+  private void onPlayerBecomesActive(ServerPlayer activePlayer) {
+    MinecraftServer server = activePlayer.level().getServer();
 
-    Text firstPerson = createBlueCenterText(
+    Component firstPerson = createBlueCenterText(
       "You're no longer marked as ",
       "AFK",
       "."
     );
-    Text thirdPerson = createBlueCenterText(
+    Component thirdPerson = createBlueCenterText(
       activePlayer.getName().getString() + " is no longer ",
       "AFK",
       "."
     );
 
-    for (ServerPlayerEntity player : server
-      .getPlayerManager()
-      .getPlayerList()) {
-      player.sendMessageToClient(
-        player.getUuid().equals(activePlayer.getUuid())
+    for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+      player.sendSystemMessage(
+        player.getUUID().equals(activePlayer.getUUID())
           ? firstPerson
           : thirdPerson,
         false
       );
     }
 
-    server.sendMessage(thirdPerson);
+    server.sendSystemMessage(thirdPerson);
 
-    removeFromAfkTeam(server, activePlayer.getNameForScoreboard());
+    removeFromAfkTeam(server, activePlayer.getScoreboardName());
   }
 
   private int getAfkPlayerCount() {
@@ -188,13 +183,13 @@ public class AfkSystem {
     MinecraftServer server,
     String scoreHolderName
   ) {
-    Team afkTeam = createOrGetScoreboardTeam(server);
+    PlayerTeam afkTeam = createOrGetScoreboardTeam(server);
     if (
-      !afkTeam.isEqual(
-        server.getScoreboard().getScoreHolderTeam(scoreHolderName)
+      !afkTeam.isAlliedTo(
+        server.getScoreboard().getPlayersTeam(scoreHolderName)
       )
     ) {
-      server.getScoreboard().addScoreHolderToTeam(scoreHolderName, afkTeam);
+      server.getScoreboard().addPlayerToTeam(scoreHolderName, afkTeam);
     }
   }
 
@@ -202,35 +197,34 @@ public class AfkSystem {
     MinecraftServer server,
     String scoreHolderName
   ) {
-    Team afkTeam = createOrGetScoreboardTeam(server);
+    PlayerTeam afkTeam = createOrGetScoreboardTeam(server);
     if (
-      afkTeam.isEqual(
-        server.getScoreboard().getScoreHolderTeam(scoreHolderName)
-      )
+      afkTeam.isAlliedTo(server.getScoreboard().getPlayersTeam(scoreHolderName))
     ) {
-      server
-        .getScoreboard()
-        .removeScoreHolderFromTeam(scoreHolderName, afkTeam);
+      server.getScoreboard().removePlayerFromTeam(scoreHolderName, afkTeam);
     }
   }
 
-  private static Team createOrGetScoreboardTeam(MinecraftServer server) {
+  private static PlayerTeam createOrGetScoreboardTeam(MinecraftServer server) {
     String teamName = DansUtils.MOD_ID_SNAKE_CASE + "_afk";
 
-    if (server.getScoreboard().getTeam(teamName) == null) {
-      server.getScoreboard().addTeam(teamName).setColor(Formatting.BLUE);
+    if (server.getScoreboard().getPlayerTeam(teamName) == null) {
+      server
+        .getScoreboard()
+        .addPlayerTeam(teamName)
+        .setColor(ChatFormatting.BLUE);
     }
 
-    return server.getScoreboard().getTeam(teamName);
+    return server.getScoreboard().getPlayerTeam(teamName);
   }
 
-  private static Text createBlueCenterText(
+  private static Component createBlueCenterText(
     String prefix,
     String blueText,
     String suffix
   ) {
-    return Text.literal(prefix)
-      .append(Text.literal(blueText).formatted(Formatting.BLUE))
-      .append(Text.literal(suffix));
+    return Component.literal(prefix)
+      .append(Component.literal(blueText).withStyle(ChatFormatting.BLUE))
+      .append(Component.literal(suffix));
   }
 }

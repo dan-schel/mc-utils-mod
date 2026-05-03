@@ -9,22 +9,22 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import java.util.Set;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 
 public class WarpWhereCommand {
 
-  public static RequiredArgumentBuilder<ServerCommandSource, String> COMMAND =
-    CommandManager.argument("where", StringArgumentType.word())
+  public static RequiredArgumentBuilder<CommandSourceStack, String> COMMAND =
+    Commands.argument("where", StringArgumentType.word())
       .suggests(new WarpLocationSuggestionProvider(false))
       .executes(WarpWhereCommand::execute);
 
-  private static int execute(CommandContext<ServerCommandSource> context)
+  private static int execute(CommandContext<CommandSourceStack> context)
     throws CommandSyntaxException {
-    ServerCommandSource source = context.getSource();
-    ServerPlayerEntity player = source.getPlayer();
+    CommandSourceStack source = context.getSource();
+    ServerPlayer player = source.getPlayer();
 
     if (player == null) {
       return CommandUtils.failure(source, "Not executed by a player.");
@@ -34,7 +34,7 @@ public class WarpWhereCommand {
     WarpLocationsState locations = WarpLocationsState.getServerState(
       source.getServer()
     );
-    WarpLocation location = locations.get(player.getUuid(), name);
+    WarpLocation location = locations.get(player.getUUID(), name);
 
     if (location == null) {
       return CommandUtils.failure(
@@ -44,20 +44,20 @@ public class WarpWhereCommand {
     }
 
     WarpLocation priorLocation = WarpLocation.fromWorld(
-      player.getBlockPos(),
-      player.getEntityWorld()
+      player.blockPosition(),
+      player.level()
     );
-    locations.savePriorLocation(player.getUuid(), priorLocation);
+    locations.savePriorLocation(player.getUUID(), priorLocation);
 
-    ServerWorld world = source
+    ServerLevel world = source
       .getServer()
-      .getWorld(location.getDimension().getWorldRegistryKey());
+      .getLevel(location.getDimension().getWorldRegistryKey());
     double x = location.getPosition().getX() + 0.5;
     double y = location.getPosition().getY();
     double z = location.getPosition().getZ() + 0.5;
-    float yaw = player.getYaw();
-    float pitch = player.getPitch();
-    player.teleport(world, x, y, z, Set.of(), yaw, pitch, true);
+    float yaw = player.getYRot();
+    float pitch = player.getXRot();
+    player.teleportTo(world, x, y, z, Set.of(), yaw, pitch, true);
 
     return CommandUtils.successWithUndoCommand(
       source,
