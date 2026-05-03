@@ -31,13 +31,9 @@ public class TntLogging {
 
       String nearbyPlayerNames = "";
 
-      for (ServerPlayer player : server
-        .getPlayerList()
-        .getPlayers()) {
+      for (ServerPlayer player : server.getPlayerList().getPlayers()) {
         if (
-          !player
-            .position()
-            .closerThan(entity.position(), SUSPICIOUS_RADIUS)
+          !player.position().closerThan(entity.position(), SUSPICIOUS_RADIUS)
         ) {
           continue;
         }

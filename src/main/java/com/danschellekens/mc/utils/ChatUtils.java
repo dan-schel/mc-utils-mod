@@ -9,9 +9,7 @@ import net.minecraft.server.permissions.Permissions;
 public class ChatUtils {
 
   public static void logAndTellOps(MinecraftServer server, Component message) {
-    for (ServerPlayer player : server
-      .getPlayerList()
-      .getPlayers()) {
+    for (ServerPlayer player : server.getPlayerList().getPlayers()) {
       if (player.permissions().hasPermission(Permissions.COMMANDS_OWNER)) {
         player.sendSystemMessage(message, false);
       }
@@ -20,7 +18,10 @@ public class ChatUtils {
     server.sendSystemMessage(message);
   }
 
-  public static Component thirdPartyFormattedMessage(String source, String message) {
+  public static Component thirdPartyFormattedMessage(
+    String source,
+    String message
+  ) {
     return Component.literal("[" + source + ": " + message + "]").withStyle(
       ChatFormatting.GRAY,
       ChatFormatting.ITALIC

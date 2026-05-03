@@ -21,9 +21,7 @@ public class WarpAddCommand {
       Commands.argument("name", StringArgumentType.word())
         .then(
           Commands.argument("global", BoolArgumentType.bool())
-            .requires(
-              Commands.hasPermission(Commands.LEVEL_OWNERS)
-            )
+            .requires(Commands.hasPermission(Commands.LEVEL_OWNERS))
             .executes(WarpAddCommand::withGlobalArg)
         )
         .executes(WarpAddCommand::withoutGlobalArg)

@@ -35,9 +35,7 @@ public class AfkSystem {
       return;
     }
 
-    for (ServerPlayer player : server
-      .getPlayerList()
-      .getPlayers()) {
+    for (ServerPlayer player : server.getPlayerList().getPlayers()) {
       if (!players.containsKey(player.getUUID())) {
         onNewPlayer(player);
       } else {
@@ -98,10 +96,7 @@ public class AfkSystem {
 
   private void onNewPlayer(ServerPlayer player) {
     getOrCreateStatus(player);
-    removeFromAfkTeam(
-      player.level().getServer(),
-      player.getScoreboardName()
-    );
+    removeFromAfkTeam(player.level().getServer(), player.getScoreboardName());
 
     int afkPlayers = getAfkPlayerCount();
     if (afkPlayers >= 1) {
@@ -121,16 +116,18 @@ public class AfkSystem {
   private void onPlayerBecomesAfk(ServerPlayer afkPlayer) {
     MinecraftServer server = afkPlayer.level().getServer();
 
-    Component firstPerson = createBlueCenterText("You're marked as ", "AFK", ".");
+    Component firstPerson = createBlueCenterText(
+      "You're marked as ",
+      "AFK",
+      "."
+    );
     Component thirdPerson = createBlueCenterText(
       afkPlayer.getName().getString() + " is ",
       "AFK",
       "."
     );
 
-    for (ServerPlayer player : server
-      .getPlayerList()
-      .getPlayers()) {
+    for (ServerPlayer player : server.getPlayerList().getPlayers()) {
       player.sendSystemMessage(
         player.getUUID().equals(afkPlayer.getUUID())
           ? firstPerson
@@ -158,9 +155,7 @@ public class AfkSystem {
       "."
     );
 
-    for (ServerPlayer player : server
-      .getPlayerList()
-      .getPlayers()) {
+    for (ServerPlayer player : server.getPlayerList().getPlayers()) {
       player.sendSystemMessage(
         player.getUUID().equals(activePlayer.getUUID())
           ? firstPerson
@@ -204,13 +199,9 @@ public class AfkSystem {
   ) {
     PlayerTeam afkTeam = createOrGetScoreboardTeam(server);
     if (
-      afkTeam.isAlliedTo(
-        server.getScoreboard().getPlayersTeam(scoreHolderName)
-      )
+      afkTeam.isAlliedTo(server.getScoreboard().getPlayersTeam(scoreHolderName))
     ) {
-      server
-        .getScoreboard()
-        .removePlayerFromTeam(scoreHolderName, afkTeam);
+      server.getScoreboard().removePlayerFromTeam(scoreHolderName, afkTeam);
     }
   }
 
@@ -218,7 +209,10 @@ public class AfkSystem {
     String teamName = DansUtils.MOD_ID_SNAKE_CASE + "_afk";
 
     if (server.getScoreboard().getPlayerTeam(teamName) == null) {
-      server.getScoreboard().addPlayerTeam(teamName).setColor(ChatFormatting.BLUE);
+      server
+        .getScoreboard()
+        .addPlayerTeam(teamName)
+        .setColor(ChatFormatting.BLUE);
     }
 
     return server.getScoreboard().getPlayerTeam(teamName);
