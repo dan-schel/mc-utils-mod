@@ -45,3 +45,18 @@ Use the following command to compile the mod:
 It saves to `/build/libs`.
 
 There is also a GitHub action which automatically builds a release when merging to master. Be sure to bump the version in `gradle.properties` before merging.
+
+### Disabling null-check warnings (VS Code)
+
+Since the switch from Yarn to Mojang's official mappings, there's about a gazillion null-check warnings in the code. Actually addressing them isn't straightforward, or wasn't at the time of writing, because (a) it's not an official Java thing, it's an Eclipse thing, and (b) parts of the Minecraft code, e.g. Brigadier, didn't seem to support it or something, and everything coming from it was nullable and created headaches.
+
+So, I've just decided to disable them for now, like so:
+
+My `.vscode/settings.json` file:
+
+```jsonc
+{
+  "java.configuration.updateBuildConfiguration": "interactive",
+  "java.compile.nullAnalysis.mode": "disabled",
+}
+```
