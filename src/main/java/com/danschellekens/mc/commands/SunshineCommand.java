@@ -4,19 +4,26 @@ import com.danschellekens.mc.utils.CommandUtils;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import java.util.Objects;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerLevel;
+import org.eclipse.jdt.annotation.Nullable;
 
 public class SunshineCommand {
 
   public static LiteralArgumentBuilder<CommandSourceStack> COMMAND =
-    Commands.literal("sunshine").executes(SunshineCommand::execute);
+    Objects.requireNonNull(
+      Commands.literal("sunshine").executes(SunshineCommand::execute)
+    );
 
-  public static int execute(CommandContext<CommandSourceStack> context)
-    throws CommandSyntaxException {
-    CommandSourceStack source = context.getSource();
-    ServerLevel world = source.getLevel();
+  public static int execute(
+    @Nullable CommandContext<CommandSourceStack> context
+  ) throws CommandSyntaxException {
+    CommandSourceStack source = Objects.requireNonNull(
+      Objects.requireNonNull(context).getSource()
+    );
+    ServerLevel world = Objects.requireNonNull(source.getLevel());
 
     if (!world.isRaining() && !world.isThundering()) {
       return CommandUtils.failure(source, "The weather is already clear.");

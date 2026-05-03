@@ -4,13 +4,16 @@ import com.danschellekens.mc.DansUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
+import org.eclipse.jdt.annotation.Nullable;
 
 public class WarpLocationsState extends SavedData {
 
@@ -123,7 +126,7 @@ public class WarpLocationsState extends SavedData {
     return RemoveResult.NOT_FOUND;
   }
 
-  public WarpLocation get(UUID playerUUID, String name) {
+  public @Nullable WarpLocation get(UUID playerUUID, String name) {
     if (this.global.contains(name)) {
       return this.global.get(name);
     }
@@ -148,14 +151,18 @@ public class WarpLocationsState extends SavedData {
     WarpLocationCollection collection = this.playerSpecific.get(playerUUID);
     if (collection != null) {
       for (String key : collection.keys()) {
-        if (this.global.contains(key)) {
+        if (this.global.contains(Objects.requireNonNull(key))) {
           continue;
         }
         result.add(key);
       }
     }
 
-    return result.toArray(new String[0]);
+    String[] array = Objects.requireNonNull(new String[result.size()]);
+    for (int i = 0; i < result.size(); i++) {
+      array[i] = Objects.requireNonNull(result.get(i));
+    }
+    return array;
   }
 
   public void savePriorLocation(UUID playerUUID, WarpLocation location) {
@@ -164,7 +171,9 @@ public class WarpLocationsState extends SavedData {
   }
 
   public Optional<WarpLocation> getPriorLocation(UUID playerUUID) {
-    return Optional.ofNullable(this.playerPriorLocations.get(playerUUID));
+    return Objects.requireNonNull(
+      Optional.ofNullable(this.playerPriorLocations.get(playerUUID))
+    );
   }
 
   public void deletePriorLocation(UUID playerUUID) {
@@ -203,33 +212,38 @@ public class WarpLocationsState extends SavedData {
     return nbt;
   }
 
-  public static WarpLocationsState fromNbt(CompoundTag nbt) {
+  public static WarpLocationsState fromNbt(@Nullable CompoundTag nbt) {
+    CompoundTag checkedNbt = Objects.requireNonNull(nbt);
     WarpLocationCollection global = WarpLocationCollection.fromNbt(
-      nbt.getCompound("Global").orElseThrow()
+      Objects.requireNonNull(checkedNbt.getCompound("Global").orElseThrow())
     );
 
     HashMap<UUID, WarpLocationCollection> playerSpecific = new HashMap<>();
-    CompoundTag playerSpecificNbt = nbt
+    CompoundTag playerSpecificNbt = checkedNbt
       .getCompound("PlayerSpecific")
       .orElseThrow();
     for (String key : playerSpecificNbt.keySet()) {
       playerSpecific.put(
-        UUID.fromString(key),
+        Objects.requireNonNull(UUID.fromString(key)),
         WarpLocationCollection.fromNbt(
-          playerSpecificNbt.getCompound(key).orElseThrow()
+          Objects.requireNonNull(
+            playerSpecificNbt.getCompound(key).orElseThrow()
+          )
         )
       );
     }
 
     HashMap<UUID, WarpLocation> playerPriorLocations = new HashMap<>();
-    CompoundTag playerPriorLocationsNbt = nbt
+    CompoundTag playerPriorLocationsNbt = checkedNbt
       .getCompound("PlayerPriorLocations")
       .orElse(new CompoundTag());
     for (String key : playerPriorLocationsNbt.keySet()) {
       playerPriorLocations.put(
-        UUID.fromString(key),
+        Objects.requireNonNull(UUID.fromString(key)),
         WarpLocation.fromNbt(
-          playerPriorLocationsNbt.getCompound(key).orElseThrow()
+          Objects.requireNonNull(
+            playerPriorLocationsNbt.getCompound(key).orElseThrow()
+          )
         )
       );
     }
@@ -237,22 +251,22 @@ public class WarpLocationsState extends SavedData {
     return new WarpLocationsState(global, playerSpecific, playerPriorLocations);
   }
 
-  public static final SavedDataType<WarpLocationsState> TYPE =
-    new SavedDataType<WarpLocationsState>(
+  public static final SavedDataType<@Nullable WarpLocationsState> TYPE =
+    new SavedDataType<@Nullable WarpLocationsState>(
       DansUtils.MOD_ID + "_warp_locations",
       WarpLocationsState::new,
-      CompoundTag.CODEC.xmap(
-        WarpLocationsState::fromNbt,
-        WarpLocationsState::writeNbt
+      CompoundTag.CODEC.xmap(WarpLocationsState::fromNbt, state ->
+        Objects.requireNonNull(state).writeNbt()
       ),
       null
     );
 
-  @SuppressWarnings("null")
   public static WarpLocationsState getServerState(MinecraftServer server) {
-    return server
-      .getLevel(Level.OVERWORLD)
-      .getDataStorage()
-      .computeIfAbsent(TYPE);
+    ServerLevel overworld = Objects.requireNonNull(
+      server.getLevel(Level.OVERWORLD)
+    );
+    return Objects.requireNonNull(
+      overworld.getDataStorage().computeIfAbsent(TYPE)
+    );
   }
 }

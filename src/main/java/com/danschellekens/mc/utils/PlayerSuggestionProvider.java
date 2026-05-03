@@ -6,9 +6,11 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
+import org.eclipse.jdt.annotation.Nullable;
 
 public class PlayerSuggestionProvider
   implements SuggestionProvider<CommandSourceStack>
@@ -22,10 +24,13 @@ public class PlayerSuggestionProvider
 
   @Override
   public CompletableFuture<Suggestions> getSuggestions(
-    CommandContext<CommandSourceStack> context,
-    SuggestionsBuilder builder
+    @Nullable CommandContext<CommandSourceStack> context,
+    @Nullable SuggestionsBuilder builder
   ) throws CommandSyntaxException {
-    CommandSourceStack source = context.getSource();
+    CommandSourceStack source = Objects.requireNonNull(
+      Objects.requireNonNull(context).getSource()
+    );
+    SuggestionsBuilder checkedBuilder = Objects.requireNonNull(builder);
     Collection<String> playerNames = source.getOnlinePlayerNames();
 
     ServerPlayer currentPlayer = source.getPlayer();
@@ -39,9 +44,9 @@ public class PlayerSuggestionProvider
         continue;
       }
 
-      builder.suggest(playerName);
+      checkedBuilder.suggest(playerName);
     }
 
-    return builder.buildFuture();
+    return Objects.requireNonNull(checkedBuilder.buildFuture());
   }
 }

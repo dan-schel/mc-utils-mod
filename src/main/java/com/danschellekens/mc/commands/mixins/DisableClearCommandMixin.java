@@ -3,6 +3,7 @@ package com.danschellekens.mc.commands.mixins;
 import com.danschellekens.mc.utils.CommandUtils;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.function.Predicate;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -25,10 +26,14 @@ public class DisableClearCommandMixin {
   ) throws CommandSyntaxException {
     return CommandUtils.success(
       source,
-      Component.literal("Did absolutely nothing (command is disabled)."),
-      Component.literal(
-        source.getTextName() + " attempted to run disabled clear command."
-      ).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+      Objects.requireNonNull(
+        Component.literal("Did absolutely nothing (command is disabled).")
+      ),
+      Objects.requireNonNull(
+        Component.literal(
+          source.getTextName() + " attempted to run disabled clear command."
+        ).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
+      ),
       false
     );
   }

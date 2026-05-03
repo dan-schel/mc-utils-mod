@@ -3,6 +3,7 @@ package com.danschellekens.mc.antigrief;
 import com.danschellekens.mc.state.WarpLocationDimension;
 import com.danschellekens.mc.utils.ChatUtils;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.UUID;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -31,13 +32,9 @@ public class TntLogging {
 
       String nearbyPlayerNames = "";
 
-      for (ServerPlayer player : server
-        .getPlayerList()
-        .getPlayers()) {
+      for (ServerPlayer player : server.getPlayerList().getPlayers()) {
         if (
-          !player
-            .position()
-            .closerThan(entity.position(), SUSPICIOUS_RADIUS)
+          !player.position().closerThan(entity.position(), SUSPICIOUS_RADIUS)
         ) {
           continue;
         }
@@ -61,7 +58,7 @@ public class TntLogging {
         entity.getBlockZ() +
         " in " +
         WarpLocationDimension.fromWorldRegistryKey(
-          entity.level().dimension()
+          Objects.requireNonNull(entity.level().dimension())
         ).getDisplayString();
 
       ChatUtils.logAndTellOps(

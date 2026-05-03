@@ -1,5 +1,6 @@
 package com.danschellekens.mc.utils;
 
+import java.util.Objects;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
@@ -9,7 +10,7 @@ import net.minecraft.server.permissions.Permissions;
 public class CommandUtils {
 
   public static int success(CommandSourceStack source, String message) {
-    return success(source, Component.literal(message));
+    return success(source, Objects.requireNonNull(Component.literal(message)));
   }
 
   public static int success(CommandSourceStack source, Component message) {
@@ -24,7 +25,7 @@ public class CommandUtils {
   ) {
     return success(
       source,
-      Component.literal(message),
+      Objects.requireNonNull(Component.literal(message)),
       thirdPartyFormattedMessage(source, message),
       tellEveryone
     );
@@ -75,9 +76,11 @@ public class CommandUtils {
     String message,
     String undoCommand
   ) {
-    Component personalMessage = Component.literal(message + " (Undo with ")
-      .append(Component.literal(undoCommand).withStyle(ChatFormatting.AQUA))
-      .append(Component.literal(".)"));
+    Component personalMessage = Objects.requireNonNull(
+      Component.literal(message + " (Undo with ")
+        .append(Component.literal(undoCommand).withStyle(ChatFormatting.AQUA))
+        .append(Component.literal(".)"))
+    );
 
     return CommandUtils.success(
       source,
@@ -91,6 +94,9 @@ public class CommandUtils {
     CommandSourceStack source,
     String message
   ) {
-    return ChatUtils.thirdPartyFormattedMessage(source.getTextName(), message);
+    return ChatUtils.thirdPartyFormattedMessage(
+      Objects.requireNonNull(source.getTextName()),
+      message
+    );
   }
 }

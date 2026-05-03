@@ -7,6 +7,7 @@ import com.danschellekens.mc.commands.SunshineCommand;
 import com.danschellekens.mc.commands.UnteleportCommand;
 import com.danschellekens.mc.commands.VisitCommand;
 import com.danschellekens.mc.commands.WarpCommand;
+import java.util.Objects;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -15,8 +16,8 @@ import org.slf4j.LoggerFactory;
 
 public class DansUtils implements ModInitializer {
 
-  public static final Logger LOGGER = LoggerFactory.getLogger(
-    "dan-schel-utils"
+  public static final Logger LOGGER = Objects.requireNonNull(
+    LoggerFactory.getLogger("dan-schel-utils")
   );
 
   public static final String MOD_ID = "dan-schel-utils";
@@ -37,7 +38,7 @@ public class DansUtils implements ModInitializer {
     );
 
     ServerTickEvents.END_SERVER_TICK.register(server -> {
-      AfkSystem.getInstance().onTick(server);
+      AfkSystem.getInstance().onTick(Objects.requireNonNull(server));
     });
   }
 }
