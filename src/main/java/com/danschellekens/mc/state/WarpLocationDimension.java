@@ -1,13 +1,12 @@
 package com.danschellekens.mc.state;
 
-import java.util.Objects;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 
 public enum WarpLocationDimension {
-  THE_OVERWORLD("The Overworld", Objects.requireNonNull(Level.OVERWORLD)),
-  THE_NETHER("The Nether", Objects.requireNonNull(Level.NETHER)),
-  THE_END("The End", Objects.requireNonNull(Level.END));
+  THE_OVERWORLD("The Overworld", Level.OVERWORLD),
+  THE_NETHER("The Nether", Level.NETHER),
+  THE_END("The End", Level.END);
 
   private final String displayString;
   private final ResourceKey<Level> worldRegistryKey;

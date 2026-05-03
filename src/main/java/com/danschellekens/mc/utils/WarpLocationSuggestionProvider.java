@@ -6,12 +6,10 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permissions;
-import org.eclipse.jdt.annotation.Nullable;
 
 public class WarpLocationSuggestionProvider
   implements SuggestionProvider<CommandSourceStack>
@@ -25,23 +23,17 @@ public class WarpLocationSuggestionProvider
 
   @Override
   public CompletableFuture<Suggestions> getSuggestions(
-    @Nullable CommandContext<CommandSourceStack> context,
-    @Nullable SuggestionsBuilder builder
+    CommandContext<CommandSourceStack> context,
+    SuggestionsBuilder builder
   ) throws CommandSyntaxException {
-    CommandContext<CommandSourceStack> checkedContext = Objects.requireNonNull(
-      context
-    );
-    SuggestionsBuilder checkedBuilder = Objects.requireNonNull(builder);
-    CommandSourceStack source = Objects.requireNonNull(
-      checkedContext.getSource()
-    );
+    CommandSourceStack source = context.getSource();
     WarpLocationsState warpLocations = WarpLocationsState.getServerState(
-      Objects.requireNonNull(source.getServer())
+      source.getServer()
     );
 
     ServerPlayer currentPlayer = source.getPlayer();
     if (currentPlayer == null) {
-      return Objects.requireNonNull(checkedBuilder.buildFuture());
+      return builder.buildFuture();
     }
 
     boolean isPlayerOp = currentPlayer
@@ -50,12 +42,12 @@ public class WarpLocationSuggestionProvider
     boolean includeGlobal = isPlayerOp || !this.hideGlobalWarpsUnlessOp;
 
     for (String warpName : warpLocations.getPossibleWarps(
-      Objects.requireNonNull(currentPlayer.getUUID()),
+      currentPlayer.getUUID(),
       includeGlobal
     )) {
-      checkedBuilder.suggest(warpName);
+      builder.suggest(warpName);
     }
 
-    return Objects.requireNonNull(checkedBuilder.buildFuture());
+    return builder.buildFuture();
   }
 }

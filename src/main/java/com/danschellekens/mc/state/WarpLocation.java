@@ -1,6 +1,5 @@
 package com.danschellekens.mc.state;
 
-import java.util.Objects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -51,7 +50,7 @@ public class WarpLocation {
       nbt.getInt("Z").orElseThrow()
     );
     WarpLocationDimension dimension = WarpLocationDimension.valueOf(
-      Objects.requireNonNull(nbt.getString("Dimension").orElseThrow())
+      nbt.getString("Dimension").orElseThrow()
     );
     return new WarpLocation(position, dimension);
   }
@@ -59,9 +58,7 @@ public class WarpLocation {
   public static WarpLocation fromWorld(BlockPos position, Level world) {
     return new WarpLocation(
       position,
-      WarpLocationDimension.fromWorldRegistryKey(
-        Objects.requireNonNull(world.dimension())
-      )
+      WarpLocationDimension.fromWorldRegistryKey(world.dimension())
     );
   }
 }

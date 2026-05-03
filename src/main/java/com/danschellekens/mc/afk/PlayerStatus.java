@@ -1,18 +1,13 @@
 package com.danschellekens.mc.afk;
 
 import java.time.Instant;
-import java.util.Objects;
-import org.eclipse.jdt.annotation.Nullable;
 
 public class PlayerStatus {
 
   boolean isDeclaredAfk;
   double yaw;
   double pitch;
-
-  @Nullable
   Instant lastMovementTime;
-
   String scoreHolderName;
 
   public PlayerStatus(
@@ -36,7 +31,7 @@ public class PlayerStatus {
 
     this.yaw = yaw;
     this.pitch = pitch;
-    this.lastMovementTime = Objects.requireNonNull(Instant.now());
+    this.lastMovementTime = Instant.now();
   }
 
   void setDeclaredAfk(boolean isDeclaredAfk, boolean manually) {

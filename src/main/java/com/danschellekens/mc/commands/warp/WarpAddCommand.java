@@ -9,38 +9,35 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import java.util.Objects;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permissions;
-import org.eclipse.jdt.annotation.Nullable;
 
 public class WarpAddCommand {
 
   public static LiteralArgumentBuilder<CommandSourceStack> COMMAND =
-    Objects.requireNonNull(
-      Commands.literal("add").then(
-        Commands.argument("name", StringArgumentType.word())
-          .then(
-            Commands.argument("global", BoolArgumentType.bool())
-              .requires(Commands.hasPermission(Commands.LEVEL_OWNERS))
-              .executes(WarpAddCommand::withGlobalArg)
-          )
-          .executes(WarpAddCommand::withoutGlobalArg)
-      )
+    Commands.literal("add").then(
+      Commands.argument("name", StringArgumentType.word())
+        .then(
+          Commands.argument("global", BoolArgumentType.bool())
+            .requires(
+              Commands.hasPermission(Commands.LEVEL_OWNERS)
+            )
+            .executes(WarpAddCommand::withGlobalArg)
+        )
+        .executes(WarpAddCommand::withoutGlobalArg)
     );
 
-  private static int withGlobalArg(
-    @Nullable CommandContext<CommandSourceStack> context
-  ) throws CommandSyntaxException {
-    return WarpAddCommand.execute(Objects.requireNonNull(context), true);
+  private static int withGlobalArg(CommandContext<CommandSourceStack> context)
+    throws CommandSyntaxException {
+    return WarpAddCommand.execute(context, true);
   }
 
   private static int withoutGlobalArg(
-    @Nullable CommandContext<CommandSourceStack> context
+    CommandContext<CommandSourceStack> context
   ) throws CommandSyntaxException {
-    return WarpAddCommand.execute(Objects.requireNonNull(context), false);
+    return WarpAddCommand.execute(context, false);
   }
 
   private static int execute(
@@ -65,18 +62,18 @@ public class WarpAddCommand {
     }
 
     WarpLocation location = WarpLocation.fromWorld(
-      Objects.requireNonNull(player.blockPosition()),
-      Objects.requireNonNull(source.getLevel())
+      player.blockPosition(),
+      source.getLevel()
     );
     WarpLocationsState locations = WarpLocationsState.getServerState(
-      Objects.requireNonNull(source.getServer())
+      source.getServer()
     );
     boolean isPlayerOp = player
       .permissions()
       .hasPermission(Permissions.COMMANDS_OWNER);
 
     AddResult result = locations.add(
-      Objects.requireNonNull(player.getUUID()),
+      player.getUUID(),
       name,
       location,
       global,
