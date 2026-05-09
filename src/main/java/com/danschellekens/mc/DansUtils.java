@@ -2,6 +2,7 @@ package com.danschellekens.mc;
 
 import com.danschellekens.mc.afk.AfkSystem;
 import com.danschellekens.mc.commands.AfkCommand;
+import com.danschellekens.mc.commands.CommandsCommand;
 import com.danschellekens.mc.commands.DaytimeCommand;
 import com.danschellekens.mc.commands.SunshineCommand;
 import com.danschellekens.mc.commands.UnteleportCommand;
@@ -27,6 +28,7 @@ public class DansUtils implements ModInitializer {
     CommandRegistrationCallback.EVENT.register(
       (dispatcher, registryAccess, environment) -> {
         dispatcher.register(AfkCommand.COMMAND);
+        dispatcher.register(CommandsCommand.COMMAND);
         dispatcher.register(DaytimeCommand.COMMAND);
         dispatcher.register(SunshineCommand.COMMAND);
         dispatcher.register(VisitCommand.COMMAND);
