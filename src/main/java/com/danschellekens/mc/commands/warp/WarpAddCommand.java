@@ -60,7 +60,7 @@ public class WarpAddCommand {
     }
 
     WarpLocation location = WarpLocation.fromWorld(
-      player.blockPosition(),
+      player.position(),
       source.getLevel()
     );
     WarpLocationsState locations = WarpLocationsState.getServerState(
