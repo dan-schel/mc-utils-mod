@@ -18,7 +18,7 @@ public class CommandsCommand {
     "- {/warp add <place>} - Save warp point",
     "- {/unwarp}, {/unvisit} - Teleport back after {/warp} or {/visit}",
     "- {/daytime}, {/nighttime} - Change time of day",
-    "- {/sunshine}, {/rain}, {/thunder} - Change weather",
+    "- {/sunshine}, {/rain}, {/thunderstorm} - Change weather",
     "- {/afk} - Manually declare yourself AFK",
   };
 
