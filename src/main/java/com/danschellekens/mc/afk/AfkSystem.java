@@ -1,6 +1,7 @@
 package com.danschellekens.mc.afk;
 
 import com.danschellekens.mc.DansUtils;
+import com.danschellekens.mc.utils.ChatUtils;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -103,10 +104,9 @@ public class AfkSystem {
       String quantityText =
         afkPlayers + (afkPlayers == 1 ? " player is" : " players are");
       player.sendSystemMessage(
-        createBlueCenterText(
-          "Welcome! " + quantityText + " currently ",
-          "AFK",
-          " (press TAB)."
+        ChatUtils.highlightBracedText(
+          "Welcome! " + quantityText + " currently {AFK} (press TAB).",
+          ChatFormatting.BLUE
         ),
         false
       );
@@ -116,15 +116,13 @@ public class AfkSystem {
   private void onPlayerBecomesAfk(ServerPlayer afkPlayer) {
     MinecraftServer server = afkPlayer.level().getServer();
 
-    Component firstPerson = createBlueCenterText(
-      "You're marked as ",
-      "AFK",
-      "."
+    Component firstPerson = ChatUtils.highlightBracedText(
+      "You're marked as {AFK}.",
+      ChatFormatting.BLUE
     );
-    Component thirdPerson = createBlueCenterText(
-      afkPlayer.getName().getString() + " is ",
-      "AFK",
-      "."
+    Component thirdPerson = ChatUtils.highlightBracedText(
+      afkPlayer.getName().getString() + " is {AFK}.",
+      ChatFormatting.BLUE
     );
 
     for (ServerPlayer player : server.getPlayerList().getPlayers()) {
@@ -144,15 +142,13 @@ public class AfkSystem {
   private void onPlayerBecomesActive(ServerPlayer activePlayer) {
     MinecraftServer server = activePlayer.level().getServer();
 
-    Component firstPerson = createBlueCenterText(
-      "You're no longer marked as ",
-      "AFK",
-      "."
+    Component firstPerson = ChatUtils.highlightBracedText(
+      "You're no longer marked as {AFK}.",
+      ChatFormatting.BLUE
     );
-    Component thirdPerson = createBlueCenterText(
-      activePlayer.getName().getString() + " is no longer ",
-      "AFK",
-      "."
+    Component thirdPerson = ChatUtils.highlightBracedText(
+      activePlayer.getName().getString() + " is no longer {AFK}.",
+      ChatFormatting.BLUE
     );
 
     for (ServerPlayer player : server.getPlayerList().getPlayers()) {
@@ -216,15 +212,5 @@ public class AfkSystem {
     }
 
     return server.getScoreboard().getPlayerTeam(teamName);
-  }
-
-  private static Component createBlueCenterText(
-    String prefix,
-    String blueText,
-    String suffix
-  ) {
-    return Component.literal(prefix)
-      .append(Component.literal(blueText).withStyle(ChatFormatting.BLUE))
-      .append(Component.literal(suffix));
   }
 }

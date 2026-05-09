@@ -2,13 +2,13 @@ package com.danschellekens.mc.commands;
 
 import com.danschellekens.mc.state.WarpLocation;
 import com.danschellekens.mc.state.WarpLocationsState;
+import com.danschellekens.mc.utils.ChatUtils;
 import com.danschellekens.mc.utils.CommandUtils;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import java.util.Optional;
 import java.util.Set;
-import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -41,13 +41,9 @@ public class UnteleportCommand {
     );
 
     if (locationOptional.isEmpty()) {
-      Component message = Component.literal(
-        "No prior location saved. Should be used after a "
-      )
-        .append(Component.literal("/warp").withStyle(ChatFormatting.AQUA))
-        .append(" or ")
-        .append(Component.literal("/visit").withStyle(ChatFormatting.AQUA))
-        .append(".");
+      Component message = ChatUtils.highlightBracedText(
+        "No prior location saved. Should be used after a {/warp} or {/visit}."
+      );
 
       return CommandUtils.failure(source, message);
     }
