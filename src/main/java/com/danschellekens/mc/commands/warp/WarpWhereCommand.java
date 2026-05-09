@@ -44,7 +44,7 @@ public class WarpWhereCommand {
     }
 
     WarpLocation priorLocation = WarpLocation.fromWorld(
-      player.blockPosition(),
+      player.position(),
       player.level()
     );
     locations.savePriorLocation(player.getUUID(), priorLocation);

@@ -3,6 +3,7 @@ package com.danschellekens.mc.state;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public class WarpLocation {
 
@@ -55,9 +56,17 @@ public class WarpLocation {
     return new WarpLocation(position, dimension);
   }
 
-  public static WarpLocation fromWorld(BlockPos position, Level world) {
+  public static WarpLocation fromWorld(Vec3 position, Level world) {
+    BlockPos blockPos = new BlockPos(
+      (int) Math.floor(position.x),
+      // Round y-coordinate (rather than floor) in case the player is standing
+      // on a half-slab.
+      (int) Math.round(position.y),
+      (int) Math.floor(position.z)
+    );
+
     return new WarpLocation(
-      position,
+      blockPos,
       WarpLocationDimension.fromWorldRegistryKey(world.dimension())
     );
   }
