@@ -8,10 +8,10 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerLevel;
 
-public class DaytimeCommand {
+public class NighttimeCommand {
 
   public static LiteralArgumentBuilder<CommandSourceStack> COMMAND =
-    Commands.literal("daytime").executes(DaytimeCommand::execute);
+    Commands.literal("nighttime").executes(NighttimeCommand::execute);
 
   public static int execute(CommandContext<CommandSourceStack> context)
     throws CommandSyntaxException {
@@ -20,12 +20,12 @@ public class DaytimeCommand {
 
     long currentTime = world.getDayTime() % 24000;
 
-    if (currentTime < 10000) {
-      return CommandUtils.failure(source, "It's already daytime.");
+    if (currentTime > 14000 && currentTime < 21000) {
+      return CommandUtils.failure(source, "It's already nighttime.");
     }
 
-    world.setDayTime(0);
+    world.setDayTime(14000);
 
-    return CommandUtils.success(source, "Skipped to daytime.", true);
+    return CommandUtils.success(source, "Skipped to nighttime.", true);
   }
 }
