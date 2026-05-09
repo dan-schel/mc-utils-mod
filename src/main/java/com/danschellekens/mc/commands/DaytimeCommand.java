@@ -21,7 +21,7 @@ public class DaytimeCommand {
     long currentTime = world.getDayTime() % 24000;
 
     if (currentTime < 10000) {
-      return CommandUtils.failure(source, "It isn't night time.");
+      return CommandUtils.failure(source, "It's already daytime.");
     }
 
     world.setDayTime(0);

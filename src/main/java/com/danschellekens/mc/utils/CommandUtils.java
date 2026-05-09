@@ -1,6 +1,5 @@
 package com.danschellekens.mc.utils;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -75,9 +74,9 @@ public class CommandUtils {
     String message,
     String undoCommand
   ) {
-    Component personalMessage = Component.literal(message + " (Undo with ")
-      .append(Component.literal(undoCommand).withStyle(ChatFormatting.AQUA))
-      .append(Component.literal(".)"));
+    Component personalMessage = ChatUtils.highlightBracedText(
+      message + " (Undo with {" + undoCommand + "}.)"
+    );
 
     return CommandUtils.success(
       source,
